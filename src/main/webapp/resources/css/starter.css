@@ -4,12 +4,16 @@ li.header {
 
 .sidebar-form {
     border-radius: 3px;
-    border: 1px solid #374850;
+    border: 1px solid #800000;
     margin: 10px 10px;
 }
 .sidebar-form, .sidebar-menu>li.header {
     overflow: hidden;
     text-overflow: clip;
+}
+
+.main-sidebar{
+    background-color: #800000;
 }
 
 #userImage {

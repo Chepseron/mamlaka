@@ -197,7 +197,7 @@ public class maaif implements Serializable {
                 return "users.xhtml?faces-redirect=true";
 
             }
-            if (g.getName().equalsIgnoreCase("Farmer")) {
+            if (g.getName().equalsIgnoreCase("Buyer")) {
                 setFarmer(true);
                 setAdmin(false);
                 setUBA(false);
@@ -205,7 +205,7 @@ public class maaif implements Serializable {
                 setGovernment(false);
                 return "welcome.xhtml?faces-redirect=true";
             }
-            if (g.getName().equalsIgnoreCase("Importer/manufacturer")) {
+            if (g.getName().equalsIgnoreCase("Logistics")) {
                 setAgrodealer(true);
                 setAdmin(false);
                 setGovernment(false);
@@ -221,7 +221,7 @@ public class maaif implements Serializable {
                 setFarmer(false);
                 return "agrodealersproducts.xhtml?faces-redirect=true";
             }
-            if (g.getName().equalsIgnoreCase("Government")) {
+            if (g.getName().equalsIgnoreCase("Financier")) {
                 setAdmin(false);
                 setAgrodealer(false);
                 setGovernment(true);
@@ -230,7 +230,7 @@ public class maaif implements Serializable {
                 return "report.xhtml?faces-redirect=true";
             }
 
-            if (g.getName().equalsIgnoreCase("UBA")) {
+            if (g.getName().equalsIgnoreCase("Mamlaka")) {
                 setAdmin(false);
                 setAgrodealer(false);
                 setGovernment(false);

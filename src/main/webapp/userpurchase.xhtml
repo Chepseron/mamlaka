@@ -96,7 +96,7 @@
                                             <h:panelGrid columns="3">
                                                 <p:outputLabel value="SELECT QUANTITY  ." style="font-family: sans-serif;  font-weight: bold"/>
                                                 <p:spinner  value="#{maaif.quantity}" style="color: green"><p:ajax event="keyup"/></p:spinner>
-                                                <p:outputLabel value="#{car.agrodealerproductunit.unitname}" style="font-family: sans-serif;  font-weight: bold"/>
+                                                <p:outputLabel value="  #{car.agrodealerproductunit.unitname}" style="font-family: sans-serif;  font-weight: bold"/>
                                                 <p:commandButton  styleClass="btn-primary" immediate="true"   icon="fa fa-shopping-cart" action="#{maaif.addCart}"   value="Add to cart">
                                                     <f:setPropertyActionListener  value="#{car}"  target="#{maaif.agrodealerProduct}" />
                                                 </p:commandButton>

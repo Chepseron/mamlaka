@@ -64,19 +64,19 @@
                                                      layout="grid" styleClass="ui-fluid card">
                                             <p:outputLabel value="Group Name"/>
                                             <p:inputText   style="width:200px" required="true" requiredMessage="missing usergroup name"  value="#{maaif.group1.name}" />
-
                                             <p:outputLabel value="Roles"/>
                                             <p:selectManyMenu  id="console"  showCheckbox ="true"  required="true" requiredMessage="missing responsibility"  widgetVar="usergroup"     label="Responsibilities"  value="#{maaif.responsibilities}"   >
-                                                <f:selectItem   itemValue="Agrodealer"  itemLabel="Agrodealer" />
-                                                <f:selectItem   itemValue="Farmer"  itemLabel="Farmer" />
-                                                <f:selectItem   itemValue="Government"  itemLabel="Government" />
+                                                <f:selectItem   itemValue="Seller"  itemLabel="Seller" />
+                                                <f:selectItem   itemValue="Buyer"  itemLabel="Buyer" />
+                                                <f:selectItem   itemValue="Logistics"  itemLabel="Logistics" />
                                                 <f:selectItem   itemValue="Admin"  itemLabel="Admin" />
+                                                 <f:selectItem   itemValue="Financier"  itemLabel="Financier" />
 
                                             </p:selectManyMenu>
                                             <p:messages for="userForm"  showDetail="true" />
                                         </p:panelGrid>
                                         <h:panelGrid columns="8">
-                                            <p:commandButton value="SUBMIT"   action="#{maaif.createUsergroup()}"  icon="fa fa-sign-out" styleClass="btn-primary" />
+                                            <p:commandButton value="SUBMIT"   action="#{maaif.createUsergroup}"  icon="fa fa-sign-out" styleClass="btn-primary" />
                                         </h:panelGrid>
                                     </h:panelGrid>
                                 </h:form>
