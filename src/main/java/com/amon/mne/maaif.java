@@ -100,6 +100,14 @@ public class maaif implements Serializable {
     private User users = new User();
     private User farmers = new User();
     private List<User> userList = new ArrayList<User>();
+    private Invoices invoice = new Invoices();
+    private List<Invoices> invoiceList = new ArrayList<Invoices>();
+    private Lpo lpo = new Lpo();
+    private List<Lpo> lpoList = new ArrayList<Lpo>();
+
+    private Consignment cons = new Consignment();
+    private List<Consignment> consList = new ArrayList<Consignment>();
+
     private Farmergroups farmergroups = new Farmergroups();
     private List<Farmergroups> farmergroupsList = new ArrayList<Farmergroups>();
     private List<Regionmodel> Regionmodel = new ArrayList<Regionmodel>();
@@ -846,6 +854,300 @@ public class maaif implements Serializable {
             getUtx().commit();
             users = new User();
             FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "User deleted", "User deleted");
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+        }
+
+        return null;
+    }
+
+    public String createInvoice() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+
+            getUtx().begin();
+            getAudit().setAction("created invoice " + getInvoice().getNumber());
+            getInvoice().setSupplier(user.getIdusers());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            getEm().persist(getInvoice());
+            getUtx().commit();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", getInvoice().getNumber() + " created successfully."));
+            users = new User();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not create an invoice."));
+        }
+
+        return null;
+    }
+
+    public String updateInvoice() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            Invoices invoices = getEm().find(Invoices.class, invoice.getNumber());
+            invoices.setNumber(invoice.getNumber());
+            invoices.setAmount(invoice.getAmount());
+            invoices.setAmountDisbursed(invoice.getAmountDisbursed());
+            invoices.setBranch(invoice.getBranch());
+            invoices.setCreatedBy(user.getIdusers());
+            invoices.setCreatedOn(new java.util.Date());
+            invoices.setDiscount(invoice.getDiscount());
+            invoices.setInterest(invoice.getInterest());
+            invoices.setInterestRate(invoice.getInterestRate());
+            invoices.setPaymentDuration(invoice.getPaymentDuration());
+            invoices.setStatus(0);
+            invoices.setSupplier(user.getIdusers());
+            getUtx().begin();
+            getAudit().setAction("updated invoice " + invoices.getNumber());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            getEm().merge(invoices);
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", invoices.getNumber() + " Updated successfully."));
+            users = new User();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not update an invoice."));
+        }
+
+        return null;
+    }
+
+    public String deleteInvoice(Invoices inv) {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            getUtx().begin();
+            getAudit().setAction("Deleted invoice " + inv.getNumber());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            Invoices toBeRemoved = (Invoices) getEm().merge(inv);
+            getEm().remove(toBeRemoved);
+            getUtx().commit();
+            users = new User();
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invoice deleted", "Invoice deleted");
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+        }
+
+        return null;
+    }
+
+    public String createLpo() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+
+            getUtx().begin();
+            getAudit().setAction("created lpo " + lpo.getItemCode());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            lpo.setSupplier(user.getIdusers());
+            getEm().persist(getAudit());
+            getEm().persist(lpo);
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", lpo.getItemCode() + " created successfully."));
+            lpo = new Lpo();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not create a LPO."));
+        }
+
+        return null;
+    }
+
+    public String updateLpo() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            Lpo lpos = getEm().find(Lpo.class, lpo.getItemCode());
+            lpos.setBarCode(lpo.getBarCode());
+            lpos.setCreatedBy(user.getIdusers());
+            lpos.setDateCreated(new java.util.Date());
+            lpos.setDeliveryDate(lpo.getDeliveryDate());
+            lpos.setExpiryDate(lpo.getExpiryDate());
+            lpos.setItemCode(lpo.getItemCode());
+            lpos.setItemDescription(lpo.getItemDescription());
+            lpos.setQty(lpo.getQty());
+            lpos.setSupplier(lpo.getSupplier());
+            lpos.setUnit(lpo.getUnit());
+            getUtx().begin();
+            getAudit().setAction("updated LPO " + lpos.getItemCode());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            getEm().merge(lpos);
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", lpo.getItemCode() + " Updated successfully."));
+            users = new User();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not update a LPO."));
+        }
+
+        return null;
+    }
+
+    public String deleteLpo(Lpo lpo) {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            getUtx().begin();
+            getAudit().setAction("Deleted LPO " + lpo.getItemCode());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            Lpo toBeRemoved = (Lpo) getEm().merge(lpo);
+            getEm().remove(toBeRemoved);
+            getUtx().commit();
+            lpo = new Lpo();
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "LPO " + lpo.getItemCode() + " deleted", "LPO " + lpo.getItemCode() + " deleted");
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+        }
+
+        return null;
+    }
+
+    public String createConsignment() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+
+            getUtx().begin();
+            getAudit().setAction("created consignment " + cons.getProductName());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            cons.setCreatedby(user.getIdusers());
+            cons.setCreatedOn(new java.util.Date());
+            getEm().persist(getAudit());
+            getEm().persist(cons);
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", "Consignment to " + cons.getProductName() + " created successfully."));
+            cons = new Consignment();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not create a consignment."));
+        }
+
+        return null;
+    }
+
+    public String updateConsignment() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            Consignment conss = getEm().find(Consignment.class, cons.getIdconsignment());
+            conss.setSerialBarCode(cons.getSerialBarCode());
+            conss.setConsigneeAddress(cons.getConsigneeAddress());
+            conss.setConsigneeContact(cons.getConsigneeContact());
+            conss.setConsigneeEmail(cons.getConsigneeEmail());
+            conss.setConsigneeName(cons.getConsigneeName());
+            conss.setConsigneePhone(cons.getConsigneePhone());
+            conss.setCreatedOn(new java.util.Date());
+            conss.setCreatedby(user.getIdusers());
+            conss.setDescription(cons.getDescription());
+            conss.setDiscount(cons.getDiscount());
+            conss.setLogisticsFee(cons.getLogisticsFee());
+            conss.setProductName(cons.getProductName());
+            conss.setQty(cons.getQty());
+            conss.setTotalPrice(cons.getTotalPrice());
+            conss.setUnitOfMeasure(cons.getUnitOfMeasure());
+            conss.setUnitPrice(cons.getUnitPrice());
+
+            getUtx().begin();
+            getAudit().setAction("updated consignment " + conss.getProductName());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            getEm().merge(conss);
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", cons.getProductName() + " Updated successfully."));
+            users = new User();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not update a consignment."));
+        }
+
+        return null;
+    }
+
+    public String deleteConsignment(Consignment cons) {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            getUtx().begin();
+            getAudit().setAction("Deleted consignment " + cons.getProductName());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            Consignment toBeRemoved = (Consignment) getEm().merge(cons);
+            getEm().remove(toBeRemoved);
+            getUtx().commit();
+            cons = new Consignment();
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "LPO " + cons.getProductName() + " deleted", "LPO " + cons.getProductName() + " deleted");
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("User", success);
 
@@ -3454,6 +3756,93 @@ public class maaif implements Serializable {
      */
     public void setAccpassword(Boolean accpassword) {
         this.accpassword = accpassword;
+    }
+
+    /**
+     * @return the invoice
+     */
+    public Invoices getInvoice() {
+        return invoice;
+    }
+
+    /**
+     * @param invoice the invoice to set
+     */
+    public void setInvoice(Invoices invoice) {
+        this.invoice = invoice;
+    }
+
+    /**
+     * @return the invoiceList
+     */
+    public List<Invoices> getInvoiceList() {
+
+        invoiceList = em.createQuery("SELECT i FROM Invoices i").getResultList();
+        return invoiceList;
+    }
+
+    /**
+     * @param invoiceList the invoiceList to set
+     */
+    public void setInvoiceList(List<Invoices> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    /**
+     * @return the lpo
+     */
+    public Lpo getLpo() {
+        return lpo;
+    }
+
+    /**
+     * @param lpo the lpo to set
+     */
+    public void setLpo(Lpo lpo) {
+        this.lpo = lpo;
+    }
+
+    /**
+     * @return the lpoList
+     */
+    public List<Lpo> getLpoList() {
+        return lpoList;
+    }
+
+    /**
+     * @param lpoList the lpoList to set
+     */
+    public void setLpoList(List<Lpo> lpoList) {
+        this.lpoList = lpoList;
+    }
+
+    /**
+     * @return the cons
+     */
+    public Consignment getCons() {
+        return cons;
+    }
+
+    /**
+     * @param cons the cons to set
+     */
+    public void setCons(Consignment cons) {
+        this.cons = cons;
+    }
+
+    /**
+     * @return the consList
+     */
+    public List<Consignment> getConsList() {
+        consList = em.createQuery("select c from Consignment c").getResultList();
+        return consList;
+    }
+
+    /**
+     * @param consList the consList to set
+     */
+    public void setConsList(List<Consignment> consList) {
+        this.consList = consList;
     }
 
     /**

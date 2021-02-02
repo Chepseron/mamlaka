@@ -13,169 +13,195 @@
     </ui:define>
     <ui:define name="body">
         <div class="box box-primary">
-            <div class="box-header with-border">
 
-                <p:panel id="spanel"  style="margin: 4em; background: transparent;  position: relative; border: 0">
-                    <h:panelGrid columns="1">
-                        <p:growl id="msgs1" sticky="true" showDetail="true" />
+            <p:panel id="spanel"  style="margin: 4em; background: transparent;  position: relative; border: 0">
+                <h:panelGrid columns="1">
+                    <p:growl id="msgs1" sticky="true" showDetail="true" />
 
-                        <p:tabView  styleClass="si-icon-16x16 si-icon-edit"   style="background: transparent; width: 100%; height: 100%; border: 0" >  
-                            <p:tab title="Create Local Purchase order"  rendered="#{maaif.agrodealer}">
-                                <h:form>
-                                    <p:panelGrid columns="6" columnClasses="ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8"
+                    <p:tabView  styleClass="si-icon-16x16 si-icon-edit"   style="background: transparent; width: 100%; height: 100%; border: 0" >  
+                        <p:tab title="Create Local Purchase order"  rendered="#{maaif.agrodealer}">
+                            <h:form>
+                                <p:panelGrid columns="6" columnClasses="ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8"
+                                             layout="grid" styleClass="ui-fluid card">
+
+                                    <p:outputLabel value="Delivery Date"/>
+                                    <p:inputText  value="#{maaif.lpo.deliveryDate}" />
+                                    <p:outputLabel value="Expiry Date"/>
+                                    <p:inputText  value="#{maaif.lpo.expiryDate}" />
+                                    <p:outputLabel value="Item Code"/>
+                                    <p:inputText  value="#{maaif.lpo.itemCode}" />
+                                    <p:outputLabel value="Bar code"/>
+                                    <p:inputText  value="#{maaif.lpo.barCode}" />
+                                    <p:outputLabel value="Item Description"/>
+                                    <p:inputText  value="#{maaif.lpo.itemDescription}" />
+                                    <p:outputLabel value="Unit"/>
+                                    <p:inputText  value="#{maaif.lpo.unit}" />
+                                    <p:outputLabel value="Quantity"/>
+                                    <p:inputText  value="#{maaif.lpo.qty}" />
+                                </p:panelGrid>
+                                <h:panelGrid columns="8">
+                                    <p:commandButton value="CREATE LPO"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createLpo}" />
+                                </h:panelGrid>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab title="My LPOS" rendered="#{maaif.agrodealer}">
+                            <h:form>
+                                <p:dataTable var="groups" value="#{maaif.lpoList}" 
+                                             paginator="true" rows="10"
+                                             editable="true"
+                                             style="background: transparent; font-size:11px"
+                                             id="activitysTable"
+                                             emptyMessage="No invoice found with given criteria" filteredValue="#{maaif.lpoList}">
+                                    <p:column filterBy="#{groups.itemCode}" sortBy="#{groups.itemCode}" headerText="Item code">
+                                        <p:outputLabel value="#{groups.itemCode}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.itemDescription}" sortBy="#{groups.itemDescription}" headerText="Item Description">
+                                        <p:outputLabel value="#{groups.itemDescription}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.createdBy}" sortBy="#{groups.createdBy}" headerText="Created By">
+                                        <p:outputLabel value="#{groups.createdBy}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.qty}" sortBy="#{groups.qty}" headerText="Quantity">
+                                        <p:outputLabel value="#{groups.qty}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.deliveryDate}" headerText="Delivery Date">
+                                        <p:outputLabel value="#{groups.deliveryDate}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.supplier}" headerText="supplier">
+                                        <p:outputLabel value="#{groups.supplier}" />
+                                    </p:column>
+
+                                    <p:column  sortBy="#{groups.unit}" headerText="unit">
+                                        <p:outputLabel value="#{groups.unit}" />
+                                    </p:column>
+                                    <p:column style="width:4%">
+                                        <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Delete  #{groups.itemDescription}'s DETAILS">                                                  
+                                            <f:setPropertyActionListener value="#{groups}"   target="#{maaif.lpo}" />  
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+                        <p:tab title="RECEIVED ORDERS" rendered="#{maaif.agrodealer}">
+                            <h:form>
+                                <p:dataTable var="userpurchase" value="#{maaif.agrodealerpurchaseList}" widgetVar="usersTable"
+                                             paginator="true" rows="10"
+                                             style="background: transparent; font-size:11px"
+                                             id="userpurchasesTable"
+                                             emptyMessage="Such a product has not been purchased" filteredValue="#{maaif.agrodealerpurchaseList}">
+                                    <f:facet name="header">
+                                        <h:commandLink>
+                                            <h:graphicImage value="/images/excel.png" width="32" height="32"/>
+                                            <p:dataExporter type="xls" target="userpurchasesTable" fileName="purchased commodities" />
+                                        </h:commandLink>
+                                        <h:commandLink>
+                                            <h:graphicImage value="/images/pdf.png" width="32" height="32"/>
+                                            <p:dataExporter type="pdf" target="userpurchasesTable" fileName="purchased commodities"/>
+                                        </h:commandLink>
+                                        <h:commandLink>
+                                            <h:graphicImage value="/images/csv.png" width="32" height="32"/>
+                                            <p:dataExporter type="csv" target="userpurchasesTable" fileName="purchased commodities" />
+                                        </h:commandLink>
+                                        <h:commandLink>
+                                            <h:graphicImage value="/images/xml.png" width="32" height="32"/>
+                                            <p:dataExporter type="xml" target="userpurchasesTable" fileName="purchased commodities" />
+                                        </h:commandLink>
+                                    </f:facet>
+                                    <p:column filterBy="#{userpurchase.agrodealerproductid.productname}" sortBy="#{userpurchase.agrodealerproductid.productname}" headerText="Product">
+                                        <p:outputLabel value="#{userpurchase.agrodealerproductid.productname}" />
+                                    </p:column>
+                                    <p:column filterBy="#{userpurchase.price}" sortBy="#{userpurchase.price}" headerText="price">
+                                        <p:outputLabel value="#{userpurchase.price}" />
+                                    </p:column>
+                                    <p:column filterBy="#{userpurchase.quantity}" sortBy="#{userpurchase.quantity}" headerText="quantity">
+                                        <p:outputLabel value="#{userpurchase.quantity}" />
+                                    </p:column>
+                                    <p:column filterBy="#{userpurchase.paymentmode.bankname}" sortBy="#{userpurchase.paymentmode.bankname}" headerText="payment mode">
+                                        <p:outputLabel value="#{userpurchase.paymentmode.bankname}" />
+                                    </p:column>
+                                    <p:column style="width:4%">
+                                        <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:ordersDetail"  oncomplete="PF('ordersDialog').show()"  value="DETAILS"   title="Edit  #{userpurchase.agrodealerproductid.productname}'s DETAILS">                                                  
+                                            <f:setPropertyActionListener value="#{userpurchase}"    target="#{maaif.userpurchase}" />  
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+                        <p:tab title="Available LPO'S" rendered="#{maaif.UBA}">
+                            <h:form>
+                                <p:dataTable var="groups" value="#{maaif.lpoList}" 
+                                             paginator="true" rows="10"
+                                             editable="true"
+                                             style="background: transparent; font-size:11px"
+                                             id="activitysTable"
+                                             emptyMessage="No LPO found with given criteria" filteredValue="#{maaif.lpoList}">
+                                    <p:column filterBy="#{groups.itemCode}" sortBy="#{groups.itemCode}" headerText="Item code">
+                                        <p:outputLabel value="#{groups.itemCode}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.itemDescription}" sortBy="#{groups.itemDescription}" headerText="Item Description">
+                                        <p:outputLabel value="#{groups.itemDescription}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.createdBy}" sortBy="#{groups.createdBy}" headerText="Created By">
+                                        <p:outputLabel value="#{groups.createdBy}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.qty}" sortBy="#{groups.qty}" headerText="Quantity">
+                                        <p:outputLabel value="#{groups.qty}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.deliveryDate}" headerText="Delivery Date">
+                                        <p:outputLabel value="#{groups.deliveryDate}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.supplier}" headerText="supplier">
+                                        <p:outputLabel value="#{groups.supplier}" />
+                                    </p:column>
+
+                                    <p:column  sortBy="#{groups.unit}" headerText="unit">
+                                        <p:outputLabel value="#{groups.unit}" />
+                                    </p:column>
+                                    <p:column style="width:4%">
+                                        <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Purchase/discount #{groups.itemDescription}">                                                  
+                                            <f:setPropertyActionListener value="#{groups}"   target="#{maaif.lpo}" />  
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+                    </p:tabView>
+                    <h:form id="editForm">
+                        <p:dialog header="Invoice Details" dynamic="true" widgetVar="typesDialog" responsive="true" showEffect="clip"  hideEffect="explode" resizable="false">
+                            <p:outputPanel id="purchaseDetail" style="text-align:center;">  
+                                <h:panelGrid columns="1" >
+                                    <p:panelGrid columns="6" columnClasses="ui-grid-col-5,ui-grid-col-8"
                                                  layout="grid" styleClass="ui-fluid card">
-                                        <p:outputLabel value="Date"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
                                         <p:outputLabel value="Delivery Date"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.deliveryDate}" />
                                         <p:outputLabel value="Supplier"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.supplier}" />
                                         <p:outputLabel value="Expiry Date"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.expiryDate}" />
                                         <p:outputLabel value="Item Code"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.itemCode}" />
                                         <p:outputLabel value="Bar code"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.barCode}" />
                                         <p:outputLabel value="Item Description"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.itemDescription}" />
                                         <p:outputLabel value="Unit"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.unit}" />
                                         <p:outputLabel value="Quantity"/>
-                                        <p:inputText  value="#{maaif.ewallet.balance}" />
+                                        <p:inputText  value="#{maaif.lpo.qty}" />
                                     </p:panelGrid>
                                     <h:panelGrid columns="8">
-                                        <p:commandButton value="CREATE LPO"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createUserpurchase}" />
+                                        <p:commandButton value="EDIT" rendered="#{maaif.agrodealer}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateLpo}" />
+                                        <p:commandButton value="DELETE" rendered="#{maaif.agrodealer}"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.deleteLpo(lpo)}" />
+                                        <p:commandButton value="PURCHASE"  rendered="#{maaif.UBA}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateLpo}" />
                                     </h:panelGrid>
-                                </h:form>
-                            </p:tab>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                </h:panelGrid>
+            </p:panel>
 
-                            <p:tab title="My LPOS" rendered="#{maaif.agrodealer}">
-                                <h:form>
-                                    <p:dataTable var="groups" value="#{maaif.cartList}" 
-                                                 paginator="true" rows="10"
-                                                 editable="true"
-                                                 style="background: transparent; font-size:11px"
-                                                 id="activitysTable"
-                                                 emptyMessage="No invoice found with given criteria" filteredValue="#{maaif.cartList}">
-                                        <p:column filterBy="#{groups.agrodealerproductid.productname}" sortBy="#{groups.agrodealerproductid.productname}" headerText="Invoice Date">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.productname}" />
-                                        </p:column>
-                                        <p:column filterBy="#{groups.price}" sortBy="#{groups.price}" headerText="Order Number">
-                                            <p:outputLabel value="#{groups.price}" />
-                                        </p:column>
-                                        <p:column filterBy="#{groups.quantity}" sortBy="#{groups.quantity}" headerText="Buyer Address">
-                                            <p:outputLabel value="#{groups.quantity}" />
-                                        </p:column>
-                                        <p:column filterBy="#{groups.createdon}" sortBy="#{groups.createdon}" headerText="Buyer">
-                                            <p:outputLabel value="#{groups.createdon}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Product">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Bar Code">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Qunatity">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Total Price">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Branch">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Created On">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column style="width:4%">
-                                            <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Delete  #{groups.agrodealerproductid.productname}'s DETAILS">                                                  
-                                                <f:setPropertyActionListener value="#{groups}"   target="#{maaif.userpurchase}" />  
-                                            </p:commandLink>
-                                        </p:column>
-                                    </p:dataTable>
-                                </h:form>
-                            </p:tab>
-                            <p:tab title="Available LPO'S" rendered="#{maaif.UBA}">
-                                <h:form>
-                                    <p:dataTable var="groups" value="#{maaif.cartList}" 
-                                                 paginator="true" rows="10"
-                                                 editable="true"
-                                                 style="background: transparent; font-size:11px"
-                                                 id="activitysTable"
-                                                 emptyMessage="No LPO found with given criteria" filteredValue="#{maaif.cartList}">
-                                        <p:column filterBy="#{groups.agrodealerproductid.productname}" sortBy="#{groups.agrodealerproductid.productname}" headerText="Invoice Date">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.productname}" />
-                                        </p:column>
-                                        <p:column filterBy="#{groups.price}" sortBy="#{groups.price}" headerText="Order Number">
-                                            <p:outputLabel value="#{groups.price}" />
-                                        </p:column>
-                                        <p:column filterBy="#{groups.quantity}" sortBy="#{groups.quantity}" headerText="Buyer Address">
-                                            <p:outputLabel value="#{groups.quantity}" />
-                                        </p:column>
-                                        <p:column filterBy="#{groups.createdon}" sortBy="#{groups.createdon}" headerText="Buyer">
-                                            <p:outputLabel value="#{groups.createdon}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Product">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Bar Code">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Qunatity">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Total Price">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Branch">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-
-                                        <p:column  sortBy="#{groups.agrodealerproductid.dealerid.companyname}" headerText="Created On">
-                                            <p:outputLabel value="#{groups.agrodealerproductid.dealerid.companyname}" />
-                                        </p:column>
-                                        <p:column style="width:4%">
-                                            <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Delete  #{groups.agrodealerproductid.productname}'s DETAILS">                                                  
-                                                <f:setPropertyActionListener value="#{groups}"   target="#{maaif.userpurchase}" />  
-                                            </p:commandLink>
-                                        </p:column>
-                                    </p:dataTable>
-                                </h:form>
-                            </p:tab>
-                        </p:tabView>
-                        <h:form id="editForm">
-                            <p:dialog header="Invoice Details" dynamic="true" widgetVar="typesDialog" responsive="true" showEffect="clip"  hideEffect="explode" resizable="false">
-                                <p:outputPanel id="purchaseDetail" style="text-align:center;">  
-                                    <h:panelGrid columns="1" >
-                                        <p:panelGrid columns="2" columnClasses="ui-grid-col-5,ui-grid-col-8"
-                                                     layout="grid" styleClass="ui-fluid card">
-                                            <p:outputLabel value="Product"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.userpurchase.agrodealerproductid}"  style="width: 200px" >
-                                                <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                                <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
-                                            </p:selectOneMenu>
-                                            <p:outputLabel value="Payment Mode"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.userpurchase.paymentmode}"  style="width: 200px" >
-                                                <f:selectItem itemLabel="Mobile money" itemValue="Mobile Money"/>
-                                                <f:selectItem itemLabel="UBA" itemValue="UBA"/>
-                                            </p:selectOneMenu>
-                                            <p:outputLabel value="Price"/>
-                                            <p:inputText     value="#{maaif.userpurchase.price}" />
-                                        </p:panelGrid>
-                                        <h:panelGrid columns="8">
-                                            <p:commandButton value="SUBMIT"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createUserpurchase()}" />
-                                        </h:panelGrid>
-                                    </h:panelGrid>
-                                </p:outputPanel>
-                            </p:dialog>
-                        </h:form>
-
-                    </h:panelGrid>
-                </p:panel>
-            </div>
         </div>
         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-danger">
             <p:commandButton value="Yes" type="button" styleClass="btn-primary ui-confirmdialog-yes"

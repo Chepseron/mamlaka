@@ -13,7 +13,6 @@
     </ui:define>
     <ui:define name="body">
         <div class="box box-primary">
-
             <p:panel id="spanel"  style="margin: 4em; background: transparent;  position: relative; border: 0">
                 <h:panelGrid columns="1">
                     <p:growl id="msgs1" sticky="true" showDetail="true" />
@@ -46,7 +45,6 @@
                                 </h:panelGrid>
                             </h:form>
                         </p:tab>
-
                         <p:tab title="My Invoices" rendered="#{maaif.agrodealer}">
                             <h:form>
                                 <p:dataTable var="groups" value="#{maaif.invoiceList}" 
