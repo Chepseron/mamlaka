@@ -128,7 +128,7 @@
                                 </p:dataTable>
                             </h:form>
                         </p:tab>
-                        <p:tab title="Available LPO'S" rendered="#{maaif.UBA}">
+                        <p:tab title="Available LPO'S" rendered="#{maaif.MAMLAKA}">
                             <h:form>
                                 <p:dataTable var="groups" value="#{maaif.lpoList}" 
                                              paginator="true" rows="10"
@@ -193,7 +193,7 @@
                                     <h:panelGrid columns="8">
                                         <p:commandButton value="EDIT" rendered="#{maaif.agrodealer}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateLpo}" />
                                         <p:commandButton value="DELETE" rendered="#{maaif.agrodealer}"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.deleteLpo(lpo)}" />
-                                        <p:commandButton value="PURCHASE"  rendered="#{maaif.UBA}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateLpo}" />
+                                        <p:commandButton value="PURCHASE"  rendered="#{maaif.MAMLAKA}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateLpo}" />
                                     </h:panelGrid>
                                 </h:panelGrid>
                             </p:outputPanel>

@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -24,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Amon.kiptoo
+ * @author Tech
  */
 @Entity
 @Table(name = "invoices")
@@ -97,6 +99,12 @@ public class Invoices implements Serializable {
     @NotNull
     @Column(name = "interest")
     private int interest;
+    @JoinColumn(name = "buyer", referencedColumnName = "idusers")
+    @ManyToOne(optional = false)
+    private User buyer;
+    @JoinColumn(name = "productID", referencedColumnName = "idagrodealerproducts")
+    @ManyToOne(optional = false)
+    private Agrodealerproducts productID;
 
     public Invoices() {
     }
@@ -214,6 +222,22 @@ public class Invoices implements Serializable {
 
     public void setInterest(int interest) {
         this.interest = interest;
+    }
+
+    public User getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(User buyer) {
+        this.buyer = buyer;
+    }
+
+    public Agrodealerproducts getProductID() {
+        return productID;
+    }
+
+    public void setProductID(Agrodealerproducts productID) {
+        this.productID = productID;
     }
 
     @Override

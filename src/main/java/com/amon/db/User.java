@@ -30,29 +30,59 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author FAZOUL
+ * @author Tech
  */
 @Entity
 @Table(name = "user")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-    @NamedQuery(name = "User.findByIdusers", query = "SELECT u FROM User u WHERE u.idusers = :idusers"),
-    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
-    @NamedQuery(name = "User.findByPword", query = "SELECT u FROM User u WHERE u.pword = :pword"),
-    @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt"),
-    @NamedQuery(name = "User.findByLastLogin", query = "SELECT u FROM User u WHERE u.lastLogin = :lastLogin"),
-    @NamedQuery(name = "User.findByDepartment", query = "SELECT u FROM User u WHERE u.department = :department"),
-    @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name = :name"),
-    @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
-    @NamedQuery(name = "User.findByStaffID", query = "SELECT u FROM User u WHERE u.staffID = :staffID"),
-    @NamedQuery(name = "User.findByRegion", query = "SELECT u FROM User u WHERE u.region = :region"),
-    @NamedQuery(name = "User.findByGender", query = "SELECT u FROM User u WHERE u.gender = :gender"),
-    @NamedQuery(name = "User.findByDisability", query = "SELECT u FROM User u WHERE u.disability = :disability"),
-    @NamedQuery(name = "User.findByCropgrown", query = "SELECT u FROM User u WHERE u.cropgrown = :cropgrown"),
-    @NamedQuery(name = "User.findByFarmergroup", query = "SELECT u FROM User u WHERE u.farmergroup = :farmergroup")})
+    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
+    , @NamedQuery(name = "User.findByIdusers", query = "SELECT u FROM User u WHERE u.idusers = :idusers")
+    , @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
+    , @NamedQuery(name = "User.findByPword", query = "SELECT u FROM User u WHERE u.pword = :pword")
+    , @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt")
+    , @NamedQuery(name = "User.findByLastLogin", query = "SELECT u FROM User u WHERE u.lastLogin = :lastLogin")
+    , @NamedQuery(name = "User.findByDepartment", query = "SELECT u FROM User u WHERE u.department = :department")
+    , @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name = :name")
+    , @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
+    , @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
+    , @NamedQuery(name = "User.findByStaffID", query = "SELECT u FROM User u WHERE u.staffID = :staffID")
+    , @NamedQuery(name = "User.findByRegion", query = "SELECT u FROM User u WHERE u.region = :region")
+    , @NamedQuery(name = "User.findByGender", query = "SELECT u FROM User u WHERE u.gender = :gender")
+    , @NamedQuery(name = "User.findByDisability", query = "SELECT u FROM User u WHERE u.disability = :disability")
+    , @NamedQuery(name = "User.findByCropgrown", query = "SELECT u FROM User u WHERE u.cropgrown = :cropgrown")
+    , @NamedQuery(name = "User.findByFarmergroup", query = "SELECT u FROM User u WHERE u.farmergroup = :farmergroup")
+    , @NamedQuery(name = "User.findByIdNumber", query = "SELECT u FROM User u WHERE u.idNumber = :idNumber")
+    , @NamedQuery(name = "User.findByResidenceAddress", query = "SELECT u FROM User u WHERE u.residenceAddress = :residenceAddress")
+    , @NamedQuery(name = "User.findByCity", query = "SELECT u FROM User u WHERE u.city = :city")
+    , @NamedQuery(name = "User.findByState", query = "SELECT u FROM User u WHERE u.state = :state")
+    , @NamedQuery(name = "User.findByDob", query = "SELECT u FROM User u WHERE u.dob = :dob")
+    , @NamedQuery(name = "User.findByCompanyName", query = "SELECT u FROM User u WHERE u.companyName = :companyName")
+    , @NamedQuery(name = "User.findByCompanyRegistrationNumber", query = "SELECT u FROM User u WHERE u.companyRegistrationNumber = :companyRegistrationNumber")
+    , @NamedQuery(name = "User.findByCompanyAddress", query = "SELECT u FROM User u WHERE u.companyAddress = :companyAddress")
+    , @NamedQuery(name = "User.findByCompanyCity", query = "SELECT u FROM User u WHERE u.companyCity = :companyCity")
+    , @NamedQuery(name = "User.findByCompanyState", query = "SELECT u FROM User u WHERE u.companyState = :companyState")
+    , @NamedQuery(name = "User.findByBankAccName", query = "SELECT u FROM User u WHERE u.bankAccName = :bankAccName")
+    , @NamedQuery(name = "User.findByBankAccCode", query = "SELECT u FROM User u WHERE u.bankAccCode = :bankAccCode")
+    , @NamedQuery(name = "User.findByPhotoUrl", query = "SELECT u FROM User u WHERE u.photoUrl = :photoUrl")})
 public class User implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
+    private Collection<Regions> regionsCollection;
+    @OneToMany(mappedBy = "createdby")
+    private Collection<Agrodealerproducts> agrodealerproductsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
+    private Collection<Agrodealers> agrodealersCollection;
+    @OneToMany(mappedBy = "ownerid")
+    private Collection<Agrodealers> agrodealersCollection1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
+    private Collection<Agrodealerproductunits> agrodealerproductunitsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
+    private Collection<Agrodealerproducttypes> agrodealerproducttypesCollection;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
+    private Collection<Invoices> invoicesCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -108,40 +138,75 @@ public class User implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "farmergroup")
     private String farmergroup;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Regions> regionsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Userpurchase> userpurchaseCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userid")
-    private Collection<Userpurchase> userpurchaseCollection1;
-    @OneToMany(mappedBy = "createdby")
-    private Collection<Banks> banksCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Cropproducts> cropproductsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userid")
-    private Collection<Ewallet> ewalletCollection;
-    @OneToMany(mappedBy = "createdby")
-    private Collection<Ewallet> ewalletCollection1;
-    @OneToMany(mappedBy = "createdby")
-    private Collection<Agrodealerproducts> agrodealerproductsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Agrodealers> agrodealersCollection;
-    @OneToMany(mappedBy = "ownerid")
-    private Collection<Agrodealers> agrodealersCollection1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Distributionchannel> distributionchannelCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Farmergroups> farmergroupsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Audit> auditCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Agrodealerproductunits> agrodealerproductunitsCollection;
-    @OneToMany(mappedBy = "createdby")
-    private Collection<Govtpayments> govtpaymentsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Orders> ordersCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdby")
-    private Collection<Agrodealerproducttypes> agrodealerproducttypesCollection;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "idNumber")
+    private String idNumber;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "residenceAddress")
+    private String residenceAddress;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "city")
+    private String city;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "state")
+    private String state;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "DOB")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dob;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "companyName")
+    private String companyName;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "companyRegistrationNumber")
+    private String companyRegistrationNumber;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "companyAddress")
+    private String companyAddress;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "companyCity")
+    private String companyCity;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "companyState")
+    private String companyState;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "bankAccName")
+    private String bankAccName;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "bankAccCode")
+    private String bankAccCode;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "photoUrl")
+    private String photoUrl;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userID")
+    private Collection<Loans> loansCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
+    private Collection<Loans> loansCollection1;
     @OneToMany(mappedBy = "createdBy")
     private Collection<User> userCollection;
     @JoinColumn(name = "createdBy", referencedColumnName = "idusers")
@@ -161,12 +226,25 @@ public class User implements Serializable {
         this.idusers = idusers;
     }
 
-    public User(Integer idusers, String gender, String disability, String cropgrown, String farmergroup) {
+    public User(Integer idusers, String gender, String disability, String cropgrown, String farmergroup, String idNumber, String residenceAddress, String city, String state, Date dob, String companyName, String companyRegistrationNumber, String companyAddress, String companyCity, String companyState, String bankAccName, String bankAccCode, String photoUrl) {
         this.idusers = idusers;
         this.gender = gender;
         this.disability = disability;
         this.cropgrown = cropgrown;
         this.farmergroup = farmergroup;
+        this.idNumber = idNumber;
+        this.residenceAddress = residenceAddress;
+        this.city = city;
+        this.state = state;
+        this.dob = dob;
+        this.companyName = companyName;
+        this.companyRegistrationNumber = companyRegistrationNumber;
+        this.companyAddress = companyAddress;
+        this.companyCity = companyCity;
+        this.companyState = companyState;
+        this.bankAccName = bankAccName;
+        this.bankAccCode = bankAccCode;
+        this.photoUrl = photoUrl;
     }
 
     public Integer getIdusers() {
@@ -289,157 +367,126 @@ public class User implements Serializable {
         this.farmergroup = farmergroup;
     }
 
-    @XmlTransient
-    public Collection<Regions> getRegionsCollection() {
-        return regionsCollection;
+    public String getIdNumber() {
+        return idNumber;
     }
 
-    public void setRegionsCollection(Collection<Regions> regionsCollection) {
-        this.regionsCollection = regionsCollection;
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
-    @XmlTransient
-    public Collection<Userpurchase> getUserpurchaseCollection() {
-        return userpurchaseCollection;
+    public String getResidenceAddress() {
+        return residenceAddress;
     }
 
-    public void setUserpurchaseCollection(Collection<Userpurchase> userpurchaseCollection) {
-        this.userpurchaseCollection = userpurchaseCollection;
+    public void setResidenceAddress(String residenceAddress) {
+        this.residenceAddress = residenceAddress;
     }
 
-    @XmlTransient
-    public Collection<Userpurchase> getUserpurchaseCollection1() {
-        return userpurchaseCollection1;
+    public String getCity() {
+        return city;
     }
 
-    public void setUserpurchaseCollection1(Collection<Userpurchase> userpurchaseCollection1) {
-        this.userpurchaseCollection1 = userpurchaseCollection1;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    @XmlTransient
-    public Collection<Banks> getBanksCollection() {
-        return banksCollection;
+    public String getState() {
+        return state;
     }
 
-    public void setBanksCollection(Collection<Banks> banksCollection) {
-        this.banksCollection = banksCollection;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    @XmlTransient
-    public Collection<Cropproducts> getCropproductsCollection() {
-        return cropproductsCollection;
+    public Date getDob() {
+        return dob;
     }
 
-    public void setCropproductsCollection(Collection<Cropproducts> cropproductsCollection) {
-        this.cropproductsCollection = cropproductsCollection;
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 
-    @XmlTransient
-    public Collection<Ewallet> getEwalletCollection() {
-        return ewalletCollection;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setEwalletCollection(Collection<Ewallet> ewalletCollection) {
-        this.ewalletCollection = ewalletCollection;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    @XmlTransient
-    public Collection<Ewallet> getEwalletCollection1() {
-        return ewalletCollection1;
+    public String getCompanyRegistrationNumber() {
+        return companyRegistrationNumber;
     }
 
-    public void setEwalletCollection1(Collection<Ewallet> ewalletCollection1) {
-        this.ewalletCollection1 = ewalletCollection1;
+    public void setCompanyRegistrationNumber(String companyRegistrationNumber) {
+        this.companyRegistrationNumber = companyRegistrationNumber;
     }
 
-    @XmlTransient
-    public Collection<Agrodealerproducts> getAgrodealerproductsCollection() {
-        return agrodealerproductsCollection;
+    public String getCompanyAddress() {
+        return companyAddress;
     }
 
-    public void setAgrodealerproductsCollection(Collection<Agrodealerproducts> agrodealerproductsCollection) {
-        this.agrodealerproductsCollection = agrodealerproductsCollection;
+    public void setCompanyAddress(String companyAddress) {
+        this.companyAddress = companyAddress;
     }
 
-    @XmlTransient
-    public Collection<Agrodealers> getAgrodealersCollection() {
-        return agrodealersCollection;
+    public String getCompanyCity() {
+        return companyCity;
     }
 
-    public void setAgrodealersCollection(Collection<Agrodealers> agrodealersCollection) {
-        this.agrodealersCollection = agrodealersCollection;
+    public void setCompanyCity(String companyCity) {
+        this.companyCity = companyCity;
     }
 
-    @XmlTransient
-    public Collection<Agrodealers> getAgrodealersCollection1() {
-        return agrodealersCollection1;
+    public String getCompanyState() {
+        return companyState;
     }
 
-    public void setAgrodealersCollection1(Collection<Agrodealers> agrodealersCollection1) {
-        this.agrodealersCollection1 = agrodealersCollection1;
+    public void setCompanyState(String companyState) {
+        this.companyState = companyState;
     }
 
-    @XmlTransient
-    public Collection<Distributionchannel> getDistributionchannelCollection() {
-        return distributionchannelCollection;
+    public String getBankAccName() {
+        return bankAccName;
     }
 
-    public void setDistributionchannelCollection(Collection<Distributionchannel> distributionchannelCollection) {
-        this.distributionchannelCollection = distributionchannelCollection;
+    public void setBankAccName(String bankAccName) {
+        this.bankAccName = bankAccName;
     }
 
-    @XmlTransient
-    public Collection<Farmergroups> getFarmergroupsCollection() {
-        return farmergroupsCollection;
+    public String getBankAccCode() {
+        return bankAccCode;
     }
 
-    public void setFarmergroupsCollection(Collection<Farmergroups> farmergroupsCollection) {
-        this.farmergroupsCollection = farmergroupsCollection;
+    public void setBankAccCode(String bankAccCode) {
+        this.bankAccCode = bankAccCode;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     @XmlTransient
-    public Collection<Audit> getAuditCollection() {
-        return auditCollection;
+    public Collection<Loans> getLoansCollection() {
+        return loansCollection;
     }
 
-    public void setAuditCollection(Collection<Audit> auditCollection) {
-        this.auditCollection = auditCollection;
-    }
-
-    @XmlTransient
-    public Collection<Agrodealerproductunits> getAgrodealerproductunitsCollection() {
-        return agrodealerproductunitsCollection;
-    }
-
-    public void setAgrodealerproductunitsCollection(Collection<Agrodealerproductunits> agrodealerproductunitsCollection) {
-        this.agrodealerproductunitsCollection = agrodealerproductunitsCollection;
+    public void setLoansCollection(Collection<Loans> loansCollection) {
+        this.loansCollection = loansCollection;
     }
 
     @XmlTransient
-    public Collection<Govtpayments> getGovtpaymentsCollection() {
-        return govtpaymentsCollection;
+    public Collection<Loans> getLoansCollection1() {
+        return loansCollection1;
     }
 
-    public void setGovtpaymentsCollection(Collection<Govtpayments> govtpaymentsCollection) {
-        this.govtpaymentsCollection = govtpaymentsCollection;
-    }
-
-    @XmlTransient
-    public Collection<Orders> getOrdersCollection() {
-        return ordersCollection;
-    }
-
-    public void setOrdersCollection(Collection<Orders> ordersCollection) {
-        this.ordersCollection = ordersCollection;
-    }
-
-    @XmlTransient
-    public Collection<Agrodealerproducttypes> getAgrodealerproducttypesCollection() {
-        return agrodealerproducttypesCollection;
-    }
-
-    public void setAgrodealerproducttypesCollection(Collection<Agrodealerproducttypes> agrodealerproducttypesCollection) {
-        this.agrodealerproducttypesCollection = agrodealerproducttypesCollection;
+    public void setLoansCollection1(Collection<Loans> loansCollection1) {
+        this.loansCollection1 = loansCollection1;
     }
 
     @XmlTransient
@@ -498,6 +545,69 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.amon.db.User[ idusers=" + idusers + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Invoices> getInvoicesCollection() {
+        return invoicesCollection;
+    }
+
+    public void setInvoicesCollection(Collection<Invoices> invoicesCollection) {
+        this.invoicesCollection = invoicesCollection;
+    }
+
+    @XmlTransient
+    public Collection<Regions> getRegionsCollection() {
+        return regionsCollection;
+    }
+
+    public void setRegionsCollection(Collection<Regions> regionsCollection) {
+        this.regionsCollection = regionsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Agrodealerproducts> getAgrodealerproductsCollection() {
+        return agrodealerproductsCollection;
+    }
+
+    public void setAgrodealerproductsCollection(Collection<Agrodealerproducts> agrodealerproductsCollection) {
+        this.agrodealerproductsCollection = agrodealerproductsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Agrodealers> getAgrodealersCollection() {
+        return agrodealersCollection;
+    }
+
+    public void setAgrodealersCollection(Collection<Agrodealers> agrodealersCollection) {
+        this.agrodealersCollection = agrodealersCollection;
+    }
+
+    @XmlTransient
+    public Collection<Agrodealers> getAgrodealersCollection1() {
+        return agrodealersCollection1;
+    }
+
+    public void setAgrodealersCollection1(Collection<Agrodealers> agrodealersCollection1) {
+        this.agrodealersCollection1 = agrodealersCollection1;
+    }
+
+    @XmlTransient
+    public Collection<Agrodealerproductunits> getAgrodealerproductunitsCollection() {
+        return agrodealerproductunitsCollection;
+    }
+
+    public void setAgrodealerproductunitsCollection(Collection<Agrodealerproductunits> agrodealerproductunitsCollection) {
+        this.agrodealerproductunitsCollection = agrodealerproductunitsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Agrodealerproducttypes> getAgrodealerproducttypesCollection() {
+        return agrodealerproducttypesCollection;
+    }
+
+    public void setAgrodealerproducttypesCollection(Collection<Agrodealerproducttypes> agrodealerproducttypesCollection) {
+        this.agrodealerproducttypesCollection = agrodealerproducttypesCollection;
     }
     
 }

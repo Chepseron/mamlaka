@@ -22,6 +22,16 @@
                             <h:form>
                                 <p:panelGrid columns="6" columnClasses="ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8"
                                              layout="grid" styleClass="ui-fluid card">
+                                    <p:outputLabel value="Buyer"/>
+                                    <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.invoice.buyer}"  style="width: 200px" >
+                                        <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value="#{maaif.userList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.companyName}, #{actorID.companyAddress}, #{actorID.username}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Product Purchased"/>
+                                    <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.invoice.productID}"  style="width: 200px" >
+                                        <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}, #{actorID.price}" />
+                                    </p:selectOneMenu>
                                     <p:outputLabel value="Invoice Number"/>
                                     <p:inputText  value="#{maaif.invoice.number}" />
                                     <p:outputLabel value="Branch"/>
@@ -38,8 +48,7 @@
                                     <p:inputText  value="#{maaif.invoice.amountDisbursed}" />
                                     <p:outputLabel value="Interests"/>
                                     <p:inputText  value="#{maaif.invoice.interest}" />
-                                    <p:outputLabel value=""/>
-                                    <p:outputLabel value=""/>
+
                                 </p:panelGrid>
                                 <h:panelGrid columns="8">
                                     <p:commandButton value="SUBMIT"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createInvoice}" />
@@ -55,6 +64,12 @@
                                              style="background: transparent; font-size:11px"
                                              id="activitysTable"
                                              emptyMessage="No invoice found with given criteria" filteredValue="#{maaif.invoiceList}">
+                                    <p:column filterBy="#{groups.productID.productname}" sortBy="#{groups.productID.productname}" headerText="Product">
+                                        <p:outputLabel value="#{groups.productID.productname}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.buyer.name}" sortBy="#{groups.buyer.name}" headerText="Buyer">
+                                        <p:outputLabel value="#{groups.buyer.name}" />
+                                    </p:column>
                                     <p:column filterBy="#{groups.createdOn}" sortBy="#{groups.createdOn}" headerText="Invoice Date">
                                         <p:outputLabel value="#{groups.createdOn}" />
                                     </p:column>
@@ -78,6 +93,95 @@
                                     </p:column>
                                     <p:column style="width:4%">
                                         <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Delete  #{groups.number}'s DETAILS">                                                  
+                                            <f:setPropertyActionListener value="#{groups}"   target="#{maaif.invoice}" />  
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+
+                        <p:tab title="My Invoices" rendered="#{maaif.farmer}">
+                            <h:form>
+                                <p:dataTable var="groups" value="#{maaif.farmerinvoiceList}" 
+                                             paginator="true" rows="10"
+                                             editable="true"
+                                             style="background: transparent; font-size:11px"
+                                             id="activitysTable"
+                                             emptyMessage="No invoice found with given criteria" filteredValue="#{maaif.farmerinvoiceList}">
+
+                                    <p:column filterBy="#{groups.productID.productname}" sortBy="#{groups.productID.productname}" headerText="Product">
+                                        <p:outputLabel value="#{groups.productID.productname}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.buyer.name}" sortBy="#{groups.buyer.name}" headerText="Buyer">
+                                        <p:outputLabel value="#{groups.buyer.name}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.createdOn}" sortBy="#{groups.createdOn}" headerText="Invoice Date">
+                                        <p:outputLabel value="#{groups.createdOn}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.number}" sortBy="#{groups.number}" headerText="Invoice Number">
+                                        <p:outputLabel value="#{groups.number}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.supplier}" sortBy="#{groups.supplier}" headerText="Supplier">
+                                        <p:outputLabel value="#{groups.supplier}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.amount}" sortBy="#{groups.amount}" headerText="amount">
+                                        <p:outputLabel value="#{groups.amount}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.paymentDuration}" headerText="Payment Plan">
+                                        <p:outputLabel value="#{groups.paymentDuration}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.discount}" headerText="Invoice discount">
+                                        <p:outputLabel value="#{groups.discount}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.amountDisbursed}" headerText="Amount to Disburse">
+                                        <p:outputLabel value="#{groups.amountDisbursed}" />
+                                    </p:column>
+                                    <p:column style="width:4%">
+                                        <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail1"  oncomplete="PF('typesDialog1').show()"  value="Details"   title="Delete  #{groups.number}'s DETAILS">                                                  
+                                            <f:setPropertyActionListener value="#{groups}"   target="#{maaif.invoice}" />  
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+                        <p:tab title="Available Invoices" rendered="#{maaif.MAMLAKA}">
+                            <h:form>
+                                <p:dataTable var="groups" value="#{maaif.invoiceList}" 
+                                             paginator="true" rows="10"
+                                             editable="true"
+                                             style="background: transparent; font-size:11px"
+                                             id="activitysTable"
+                                             emptyMessage="No invoice found with given criteria" filteredValue="#{maaif.invoiceList}">
+                                    <p:column filterBy="#{groups.productID.productname}" sortBy="#{groups.productID.productname}" headerText="Product">
+                                        <p:outputLabel value="#{groups.productID.productname}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.buyer.name}" sortBy="#{groups.buyer.name}" headerText="Buyer">
+                                        <p:outputLabel value="#{groups.buyer.name}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.createdOn}" sortBy="#{groups.createdOn}" headerText="Invoice Date">
+                                        <p:outputLabel value="#{groups.createdOn}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.number}" sortBy="#{groups.number}" headerText="Invoice Number">
+                                        <p:outputLabel value="#{groups.number}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.supplier}" sortBy="#{groups.supplier}" headerText="Supplier">
+                                        <p:outputLabel value="#{groups.supplier}" />
+                                    </p:column>
+                                    <p:column filterBy="#{groups.amount}" sortBy="#{groups.amount}" headerText="amount">
+                                        <p:outputLabel value="#{groups.amount}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.paymentDuration}" headerText="Payment Plan">
+                                        <p:outputLabel value="#{groups.paymentDuration}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.discount}" headerText="Invoice discount">
+                                        <p:outputLabel value="#{groups.discount}" />
+                                    </p:column>
+                                    <p:column  sortBy="#{groups.amountDisbursed}" headerText="Amount to Disburse">
+                                        <p:outputLabel value="#{groups.amountDisbursed}" />
+                                    </p:column>
+
+                                    <p:column style="width:4%">
+                                        <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Purchase  #{groups.number}">                                                  
                                             <f:setPropertyActionListener value="#{groups}"   target="#{maaif.invoice}" />  
                                         </p:commandLink>
                                     </p:column>
@@ -109,6 +213,9 @@
                                             <p:dataExporter type="xml" target="userpurchasesTable" fileName="purchased commodities" />
                                         </h:commandLink>
                                     </f:facet>
+                                    <p:column filterBy="#{userpurchase.createdby.name}" sortBy="#{userpurchase.createdby.name}" headerText="Buyer">
+                                        <p:outputLabel value="#{userpurchase.createdby.name}" />
+                                    </p:column>
                                     <p:column filterBy="#{userpurchase.agrodealerproductid.productname}" sortBy="#{userpurchase.agrodealerproductid.productname}" headerText="Product">
                                         <p:outputLabel value="#{userpurchase.agrodealerproductid.productname}" />
                                     </p:column>
@@ -129,103 +236,133 @@
                                 </p:dataTable>
                             </h:form>
                         </p:tab>
-                        <p:tab title="Available Invoices" rendered="#{maaif.UBA}">
-                            <h:form>
-                                <p:dataTable var="groups" value="#{maaif.invoiceList}" 
-                                             paginator="true" rows="10"
-                                             editable="true"
-                                             style="background: transparent; font-size:11px"
-                                             id="activitysTable"
-                                             emptyMessage="No invoice found with given criteria" filteredValue="#{maaif.invoiceList}">
-                                    <p:column filterBy="#{groups.createdOn}" sortBy="#{groups.createdOn}" headerText="Invoice Date">
-                                        <p:outputLabel value="#{groups.createdOn}" />
-                                    </p:column>
-                                    <p:column filterBy="#{groups.number}" sortBy="#{groups.number}" headerText="Invoice Number">
-                                        <p:outputLabel value="#{groups.number}" />
-                                    </p:column>
-                                    <p:column filterBy="#{groups.supplier}" sortBy="#{groups.supplier}" headerText="Supplier">
-                                        <p:outputLabel value="#{groups.supplier}" />
-                                    </p:column>
-                                    <p:column filterBy="#{groups.amount}" sortBy="#{groups.amount}" headerText="amount">
-                                        <p:outputLabel value="#{groups.amount}" />
-                                    </p:column>
-                                    <p:column  sortBy="#{groups.paymentDuration}" headerText="Payment Plan">
-                                        <p:outputLabel value="#{groups.paymentDuration}" />
-                                    </p:column>
-                                    <p:column  sortBy="#{groups.discount}" headerText="Invoice discount">
-                                        <p:outputLabel value="#{groups.discount}" />
-                                    </p:column>
-                                    <p:column  sortBy="#{groups.amountDisbursed}" headerText="Amount to Disburse">
-                                        <p:outputLabel value="#{groups.amountDisbursed}" />
-                                    </p:column>
-
-                                    <p:column style="width:4%">
-                                        <p:commandLink process="@this" styleClass="si-icon-16x16 si-icon-edit" update=":editForm:typesDetail"  oncomplete="PF('typesDialog').show()"  value="Details"   title="Purchase  #{groups.number}">                                                  
-                                            <f:setPropertyActionListener value="#{groups}"   target="#{maaif.invoice}" />  
-                                        </p:commandLink>
-                                    </p:column>
-
-
-                                </p:dataTable>
-                            </h:form>
-                        </p:tab>
                     </p:tabView>
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <h:form id="editForm">
+                        <p:dialog header="Invoice Details(You can proceed to request for a loan with your invoice details)" dynamic="true" widgetVar="typesDialog1" responsive="true" showEffect="clip"  hideEffect="explode" resizable="false">
+                            <p:outputPanel id="purchaseDetail1" style="text-align:center;">  
+                                <p:panelGrid columns="6" columnClasses="ui-grid-col-5,ui-grid-col-8"
+                                             layout="grid" styleClass="ui-fluid card">
+                                    <p:outputLabel value="Invoice Number"/>
+                                    <p:inputText  value="#{maaif.invoice.number}" />
+                                    <p:outputLabel value="Invoiced Product"/>
+                                    <p:inputText  value="#{maaif.invoice.productID.productname}" />
+                                    <p:outputLabel value="Branch"/>
+                                    <p:inputText  value="#{maaif.invoice.branch}" />
+                                    <p:outputLabel value="Supplier"/>
+                                    <p:inputText  value="#{maaif.invoice.supplier}" />
+                                    <p:outputLabel value="Invoice Amount"/>
+                                    <p:inputText  value="#{maaif.invoice.amount}" />
+                                    <p:outputLabel value="Loan Interest Rate"/>
+                                    <p:inputText  value="#{maaif.invoice.interestRate}" />
+                                    <p:outputLabel value="Payment Duration"/>
+                                    <p:inputText  value="#{maaif.invoice.paymentDuration}" />
+                                    <p:outputLabel value="Invoice Discount"/>
+                                    <p:inputText  value="#{maaif.invoice.discount}" />
+                                    <p:outputLabel value="Amount to disburse"/>
+                                    <p:inputText  value="#{maaif.invoice.amountDisbursed}" />
+                                    <p:outputLabel value="Interests"/>
+                                    <p:inputText  value="#{maaif.invoice.interest}" />
+                                    <p:outputLabel value="Buyer"/>
+                                    <p:inputText  value="#{maaif.invoice.buyer.name}" />
+
+                                    
+                                    
+                                    <p:outputLabel value="Aggregator Loan Reference"/>
+                                    <p:inputText   value="#{maaif.invoice.number}"   />
+                                    <p:outputLabel value="Annual Interest rate"/>
+                                    <p:inputText      value="#{maaif.invoice.interestRate}"/>
+                                    <p:outputLabel value="Loan Amount"/>
+                                    <p:inputText   value="#{maaif.invoice.amount}"/>
+                                    <p:outputLabel value="Loan Purpose"/>
+                                    <p:inputText   value="#{maaif.invoice.number} #{maaif.invoice.amount} #{maaif.invoice.buyer.companyName}"/>
+                                    <p:outputLabel value="Loan Tenure"/>
+                                    <p:inputText     value="#{maaif.invoice.paymentDuration}"/>
+                                    <p:outputLabel value="Product ID"/>
+                                    <p:inputText  value="#{maaif.invoice.productID.productname}"/>
+                                    <p:outputLabel value="Repayment Start Date"/>
+                                    <p:calendar  value="#{maaif.loans.repaymentStartDate}" />
+                                    <p:outputLabel value="Sector"/>
+                                    <p:inputText     value="#{maaif.loans.sectorId}" />
+                                    <p:outputLabel value="Borrower"/>
+                                    <p:inputText  value="#{maaif.invoice.buyer.idNumber} #{maaif.invoice.buyer.name} #{maaif.invoice.buyer.companyName}" />
+                                </p:panelGrid>
+                                <h:panelGrid columns="8">
+                                    <p:commandButton value="REQUEST LOAN"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.requestBuyerInvoiceLoan}" />
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+
+
                         <p:dialog header="Invoice Details" dynamic="true" widgetVar="typesDialog" responsive="true" showEffect="clip"  hideEffect="explode" resizable="false">
                             <p:outputPanel id="purchaseDetail" style="text-align:center;">  
-                                <h:panelGrid columns="1" >
-                                    <p:panelGrid columns="6" columnClasses="ui-grid-col-5,ui-grid-col-8"
-                                                 layout="grid" styleClass="ui-fluid card">
-                                        <p:outputLabel value="Invoice Number"/>
-                                        <p:inputText  value="#{maaif.invoice.number}" />
-                                        <p:outputLabel value="Branch"/>
-                                        <p:inputText  value="#{maaif.invoice.branch}" />
-                                        <p:outputLabel value="Supplier"/>
-                                        <p:inputText  value="#{maaif.invoice.supplier}" />
-                                        <p:outputLabel value="Invoice Amount"/>
-                                        <p:inputText  value="#{maaif.invoice.amount}" />
-                                        <p:outputLabel value="Loan Interest Rate"/>
-                                        <p:inputText  value="#{maaif.invoice.interestRate}" />
-                                        <p:outputLabel value="Payment Duration"/>
-                                        <p:inputText  value="#{maaif.invoice.paymentDuration}" />
-                                        <p:outputLabel value="Invoice Discount"/>
-                                        <p:inputText  value="#{maaif.invoice.discount}" />
-                                        <p:outputLabel value="Amount to disburse"/>
-                                        <p:inputText  value="#{maaif.invoice.amountDisbursed}" />
-                                        <p:outputLabel value="Interests"/>
-                                        <p:inputText  value="#{maaif.invoice.interest}" />
-                                        <p:outputLabel value=""/>
-                                        <p:outputLabel value=""/>
-                                    </p:panelGrid>
-                                    <h:panelGrid columns="8">
-                                        <p:commandButton value="EDIT" rendered="#{maaif.agrodealer}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateInvoice}" />
-                                        <p:commandButton value="DELETE" rendered="#{maaif.agrodealer}"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.deleteInvoice(inv)}" />
-                                        <p:commandButton value="PURCHASE"  rendered="#{maaif.UBA}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateInvoice}" />
-                                    </h:panelGrid>
+                                <p:panelGrid columns="6" columnClasses="ui-grid-col-5,ui-grid-col-8"
+                                             layout="grid" styleClass="ui-fluid card">
+                                    <p:outputLabel value="Invoice Number"/>
+                                    <p:inputText  value="#{maaif.invoice.number}" />
+                                    <p:outputLabel value="Branch"/>
+                                    <p:inputText  value="#{maaif.invoice.branch}" />
+                                    <p:outputLabel value="Supplier"/>
+                                    <p:inputText  value="#{maaif.invoice.supplier}" />
+                                    <p:outputLabel value="Invoice Amount"/>
+                                    <p:inputText  value="#{maaif.invoice.amount}" />
+                                    <p:outputLabel value="Loan Interest Rate"/>
+                                    <p:inputText  value="#{maaif.invoice.interestRate}" />
+                                    <p:outputLabel value="Payment Duration"/>
+                                    <p:inputText  value="#{maaif.invoice.paymentDuration}" />
+                                    <p:outputLabel value="Invoice Discount"/>
+                                    <p:inputText  value="#{maaif.invoice.discount}" />
+                                    <p:outputLabel value="Amount to disburse"/>
+                                    <p:inputText  value="#{maaif.invoice.amountDisbursed}" />
+                                    <p:outputLabel value="Interests"/>
+                                    <p:inputText  value="#{maaif.invoice.interest}" />
+                                    <p:outputLabel value="Buyer"/>
+                                    <p:inputText  value="#{maaif.invoice.buyer.name}" />
+                                    <p:outputLabel value=""/>
+                                    <p:outputLabel value=""/>
+                                </p:panelGrid>
+
+                                <h:panelGrid columns="8">
+                                    <p:commandButton value="EDIT" rendered="#{maaif.agrodealer}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateInvoice}" />
+                                    <p:commandButton value="DELETE" rendered="#{maaif.agrodealer}"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.deleteInvoice(inv)}" />
+                                    <p:commandButton value="PURCHASE"  rendered="#{maaif.government}" ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.updateInvoice}" />
+
                                 </h:panelGrid>
                             </p:outputPanel>
                         </p:dialog>
                         <p:dialog header="orders" dynamic="true" widgetVar="ordersDialog" showEffect="clip"  hideEffect="explode" resizable="false">
                             <p:outputPanel id="ordersDetail" style="text-align:center;">  
-                                <h:panelGrid columns="1" >
-                                    <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-                                                 layout="grid" styleClass="ui-fluid card">
-                                        <p:outputLabel value="Purchase made"/>
-                                        <p:outputLabel  value="#{maaif.userpurchase.agrodealerproductid.productname}"/>
-                                        <p:outputLabel value="Purchase price"/>
-                                        <p:outputLabel  value="#{maaif.userpurchase.agrodealerproductid.price}"/>
-                                        <p:outputLabel value="Purchased quantity"/>
-                                        <p:outputLabel  value="#{maaif.userpurchase.agrodealerproductid.qtypurchased}"/>
-                                        <p:messages for="userForm"  showDetail="true" />
-                                    </p:panelGrid>
-                                    <h:panelGrid columns="8">
-                                        <p:commandButton value="INVOICE CUSTOMER"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createOrders}" />
-                                    </h:panelGrid>
+                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                                             layout="grid" styleClass="ui-fluid card">
+                                    <p:outputLabel value="Purchase made"/>
+                                    <p:outputLabel  value="#{maaif.userpurchase.agrodealerproductid.productname}"/>
+                                    <p:outputLabel value="Purchase price"/>
+                                    <p:outputLabel  value="#{maaif.userpurchase.agrodealerproductid.price}"/>
+                                    <p:outputLabel value="Purchased quantity"/>
+                                    <p:outputLabel  value="#{maaif.userpurchase.agrodealerproductid.qtypurchased}"/>
+                                    <p:messages for="userForm"  showDetail="true" />
+                                </p:panelGrid>
+                                <h:panelGrid columns="8">
+                                    <p:commandButton value="INVOICE CUSTOMER"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createOrders}" />
                                 </h:panelGrid>
                             </p:outputPanel>
                         </p:dialog>

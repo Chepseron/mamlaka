@@ -30,7 +30,7 @@
                             <p:chart type="bar" model="#{maaif.agrodealersperRegion}" style="height:300px"/>
                         </h:panelGrid>
                         <p:tabView  styleClass="si-icon-16x16 si-icon-edit"    style="background: transparent" >  
-                            <p:tab title="AGRO DEALERS">
+                            <p:tab title="SELLERS">
                                 <h:form>
 
                                     <p:dataTable var="agrodealers" value="#{maaif.agrodealersList}" widgetVar="cohortTable"
@@ -74,7 +74,7 @@
                                     </p:dataTable>
                                 </h:form>
                             </p:tab>
-                            <p:tab title="AGRO DEALER PRODUCTS">
+                            <p:tab title="SELLER PRODUCTS">
                                 <h:form>
                                     <p:dataTable var="agrodealerProduct" value="#{maaif.agrodealerProductList}" widgetVar="perfTable"
                                                  paginator="true" rows="10"
@@ -281,7 +281,7 @@
                                     </p:dataTable>
                                 </h:form>
                             </p:tab>
-                            <p:tab title="GOVERNMENT PAYMENTS">
+                            <p:tab title="PAYMENTS">
                                 <h:form>
                                     <p:dataTable var="govtpayments" value="#{maaif.govtpaymentsList}" widgetVar="expTable"
                                                  paginator="true" rows="10"

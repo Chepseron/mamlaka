@@ -1,7 +1,7 @@
 -- MySQL Administrator dump 1.4
 --
 -- ------------------------------------------------------
--- Server version	5.7.24
+-- Server version	5.7.32-log
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -15,11 +15,11 @@
 
 
 --
--- Create schema maaif
+-- Create schema mamlaka
 --
 
-CREATE DATABASE IF NOT EXISTS maaif;
-USE maaif;
+CREATE DATABASE IF NOT EXISTS mamlaka;
+USE mamlaka;
 
 --
 -- Temporary table structure for view `agrodealersperregion`
@@ -758,7 +758,13 @@ CREATE TABLE `invoices` (
   `discount` int(10) NOT NULL,
   `amountDisbursed` int(10) NOT NULL,
   `interest` int(10) NOT NULL,
-  PRIMARY KEY (`number`)
+  `buyer` int(10) unsigned NOT NULL,
+  `productID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`number`),
+  KEY `FK_invoices_1` (`buyer`),
+  KEY `FK_invoices_2` (`productID`),
+  CONSTRAINT `FK_invoices_1` FOREIGN KEY (`buyer`) REFERENCES `user` (`idusers`),
+  CONSTRAINT `FK_invoices_2` FOREIGN KEY (`productID`) REFERENCES `agrodealerproducts` (`idagrodealerproducts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -767,6 +773,40 @@ CREATE TABLE `invoices` (
 
 /*!40000 ALTER TABLE `invoices` DISABLE KEYS */;
 /*!40000 ALTER TABLE `invoices` ENABLE KEYS */;
+
+
+--
+-- Definition of table `loans`
+--
+
+DROP TABLE IF EXISTS `loans`;
+CREATE TABLE `loans` (
+  `idloans` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userID` int(10) unsigned NOT NULL,
+  `aggregator_loan_ref` varchar(45) NOT NULL,
+  `product_id` varchar(45) NOT NULL,
+  `sector_id` varchar(45) NOT NULL,
+  `loan_tenure` int(10) unsigned NOT NULL,
+  `loan_amount` int(10) unsigned NOT NULL,
+  `annual_interest_rate` int(10) unsigned NOT NULL,
+  `repayment_start_date` datetime NOT NULL,
+  `loan_purpose` varchar(200) NOT NULL,
+  `createdBy` int(10) unsigned NOT NULL,
+  `createdOn` datetime NOT NULL,
+  `status` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`idloans`),
+  KEY `FK_loans_1` (`userID`),
+  KEY `FK_loans_2` (`createdBy`),
+  CONSTRAINT `FK_loans_1` FOREIGN KEY (`userID`) REFERENCES `user` (`idusers`),
+  CONSTRAINT `FK_loans_2` FOREIGN KEY (`createdBy`) REFERENCES `user` (`idusers`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `loans`
+--
+
+/*!40000 ALTER TABLE `loans` DISABLE KEYS */;
+/*!40000 ALTER TABLE `loans` ENABLE KEYS */;
 
 
 --
@@ -965,6 +1005,19 @@ CREATE TABLE `user` (
   `disability` varchar(45) NOT NULL,
   `cropgrown` varchar(45) NOT NULL,
   `farmergroup` varchar(45) NOT NULL,
+  `idNumber` varchar(45) NOT NULL,
+  `residenceAddress` varchar(100) NOT NULL,
+  `city` varchar(45) NOT NULL,
+  `state` varchar(45) NOT NULL,
+  `DOB` datetime NOT NULL,
+  `companyName` varchar(45) NOT NULL,
+  `companyRegistrationNumber` varchar(45) NOT NULL,
+  `companyAddress` varchar(45) NOT NULL,
+  `companyCity` varchar(45) NOT NULL,
+  `companyState` varchar(45) NOT NULL,
+  `bankAccName` varchar(45) NOT NULL,
+  `bankAccCode` varchar(45) NOT NULL,
+  `photoUrl` varchar(100) NOT NULL,
   PRIMARY KEY (`idusers`),
   KEY `FK_user_1` (`createdBy`),
   KEY `FK_user_2` (`statusID`),
@@ -979,13 +1032,13 @@ CREATE TABLE `user` (
 --
 
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`idusers`,`username`,`pword`,`createdAt`,`lastLogin`,`department`,`groupID`,`name`,`email`,`phone`,`staffID`,`statusID`,`createdBy`,`region`,`gender`,`disability`,`cropgrown`,`farmergroup`) VALUES 
- (1,'root','root',NULL,NULL,1,1,'Administrator','chepseron@gmail.com','728140544',12345,1,1,1,'','','0',''),
- (2,'buyer','buyer',NULL,NULL,1,2,'Buyer Buyer','chepseron@gmail.com','728140544',12334,1,2,1,'','','0',''),
- (3,'financier','financier',NULL,NULL,0,4,'Financier Financier','chepseron@gmail.com','728140544',12345,1,NULL,0,'','','0',''),
- (4,'logistics','logistics',NULL,NULL,1,3,'Logistics Logistics','chepseron@gmail.com','728140544',123,1,4,1,'','','0',''),
- (5,'seller','seller',NULL,NULL,1,5,'Seller Seller','chepseron@gmail.com','728140544',123,1,5,1,'','','0',''),
- (10,'mamlaka','mamlaka','2018-05-15 11:11:21',NULL,1,6,'Mamlaka Mamlaka','info@uba.com','0720123456',12345,1,1,0,'Male','','0','');
+INSERT INTO `user` (`idusers`,`username`,`pword`,`createdAt`,`lastLogin`,`department`,`groupID`,`name`,`email`,`phone`,`staffID`,`statusID`,`createdBy`,`region`,`gender`,`disability`,`cropgrown`,`farmergroup`,`idNumber`,`residenceAddress`,`city`,`state`,`DOB`,`companyName`,`companyRegistrationNumber`,`companyAddress`,`companyCity`,`companyState`,`bankAccName`,`bankAccCode`,`photoUrl`) VALUES 
+ (1,'root','coEJEIn3pJNeAy05hk4SLg==',NULL,NULL,1,1,'Administrator','chepseron@gmail.com','728140544',12345,1,1,1,'','','0','','','','','','0000-00-00 00:00:00','','','','','','','',''),
+ (2,'buyer','PlszN08CWdI0a7CIbbxfJQ==',NULL,NULL,1,2,'Buyer Buyer','chepseron@gmail.com','728140544',12334,1,2,1,'','','0','','','','','','0000-00-00 00:00:00','','','','','','','',''),
+ (3,'financier','dYDpfSBTBdDetcxZDHX2IA==',NULL,NULL,0,4,'Financier Financier','chepseron@gmail.com','728140544',12345,1,NULL,0,'','','0','','','','','','0000-00-00 00:00:00','','','','','','','',''),
+ (4,'logistics','IVsz41PP9IpOLb6XKyH68A==',NULL,NULL,1,3,'Logistics Logistics','chepseron@gmail.com','728140544',123,1,4,1,'','','0','','','','','','0000-00-00 00:00:00','','','','','','','',''),
+ (5,'seller','siW+bfCoaaIz+2ivT7vjbQ==',NULL,NULL,1,5,'Seller Seller','chepseron@gmail.com','728140544',123,1,5,1,'','','0','','','','','','0000-00-00 00:00:00','','','','','','','',''),
+ (10,'mamlaka','aDFwRmmQlduMleX5XgE70A==','2018-05-15 11:11:21',NULL,1,6,'Mamlaka Mamlaka','info@uba.com','0720123456',12345,1,1,0,'Male','','0','','','','','','0000-00-00 00:00:00','','','','','','','','');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 

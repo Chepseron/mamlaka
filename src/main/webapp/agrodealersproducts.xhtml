@@ -14,115 +14,77 @@
 
         <div class="box box-primary">
             <div class="box-header with-border">
-                <div id="main-buttons" class="hidden-sm hidden-xs">
-                    <h:form id="editForm1">
-                        <p:commandButton action="car-form?faces-redirect=true" icon="fa fa-plus" styleClass="btn-primary"
-                                         value="New" />
-                        <p:spacer width="5"/>
-                        <p:commandButton value="Delete Selected" icon="fa fa-trash" styleClass="btn-danger"
-                                         process="@this" update="@form"
-                                         >
-                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
-                        </p:commandButton>
-                        <p:spacer width="5"/>
-                        <p:commandButton value="Search" update="@(.ui-dialog)" styleClass="btn-info"
-                                         oncomplete="PF('searchDialog').show()" icon="fa fa-search"/>
 
-                        <p:spacer width="5"/>
-                        <p:commandButton value="Clear" update="@(.ui-dialog, .ui-datatable)" process="@form"
-
-                                         icon="fa fa-refresh"/>
-                    </h:form>
-                </div>
-                <h:form id="ButtonsForm">
-                    <p:splitButton value="New" action="car-form?faces-redirect=true"
-                                   icon="fa fa-plus"
-                                   styleClass="hidden-md hidden-lg btn-primary">
-                        <p:menuitem value="Delete Selected" 
-                                    process="@this" update="@form" 
-                                    icon="fa fa-trash">
-                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
-                        </p:menuitem>
-                        <p:menuitem value="Search" update="@(.ui-dialog)"
-                                    oncomplete="PF('searchDialog').show()"
-                                    icon="fa fa-search"/>
-                        <p:menuitem value="Clear" update="@(.ui-dialog, .ui-datatable)" process="@form"
-                                    icon="fa fa-refresh"/>
-                    </p:splitButton>
-                </h:form>
-                <p:separator/>
                 <p:panel id="spanel">
                     <h:panelGrid columns="1">
 
                         <p:tabView  styleClass="si-icon-16x16 si-icon-edit"    style="background: transparent; width: inherit; height: 100%; border: 0" >  
-                            <p:tab title="MANAGE AGRO DEALER PRODUCTS">
+                            <p:tab title="MANAGE SELLER PRODUCTS">
                                 <h:form id="agrodealerProductForm"> 
-                                    <h:panelGrid columns="1">
-                                        <p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-8"
-                                                     layout="grid" styleClass="ui-fluid card">
-                                            <p:outputLabel value="Type"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.producttype}"  style="width: 200px" >
-                                                <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                                <f:selectItems value="#{maaif.productTypesList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
-                                            </p:selectOneMenu>
-                                            <p:outputLabel value="Variety"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.variety}"  style="width: 200px" >
-                                                <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                                <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
-                                            </p:selectOneMenu>
+                                    <p:panelGrid columns="4" columnClasses="ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8"
+                                                 layout="grid" styleClass="ui-fluid card">
+                                        <p:outputLabel value="Type"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.producttype}"  style="width: 200px" >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.productTypesList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Variety"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.variety}"  style="width: 200px" >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
+                                        </p:selectOneMenu>
 
-                                            <p:outputLabel value="Packaged with:"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.productpackage}"  style="width: 200px" >
-                                                <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                                <f:selectItems value="#{maaif.agrodealerProductList}"  var="pkg" itemValue="#{pkg}" itemLabel="#{pkg.productname}" />
-                                            </p:selectOneMenu>
-                                            <p:outputLabel value="Unit"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.agrodealerproductunit}"  style="width: 200px" >
-                                                <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                                <f:selectItems value="#{maaif.agrodealerproductunitsList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.unitname}" />
-                                            </p:selectOneMenu>
-                                            <p:outputLabel value="Dealer"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.dealerid}"  style="width: 200px" >
-                                                <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                                <f:selectItems value="#{maaif.agrodealersList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.companyname}" />
-                                            </p:selectOneMenu>
-                                            <p:outputLabel value="Quantity Present"/>
-                                            <p:inputText      value="#{maaif.agrodealerProduct.quantitypresent}"/>
-                                            <p:outputLabel value="UNBS Tag number"/>
-                                            <p:inputText      value="#{maaif.agrodealerProduct.ubsid}"/>
-                                            <p:outputLabel value="Product Serial Number"/>
-                                            <p:inputText      value="#{maaif.agrodealerProduct.productSerial}"/>
-                                            <p:outputLabel value="Name"/>
-                                            <p:inputText      value="#{maaif.agrodealerProduct.productname}"/>
-                                            <p:outputLabel value="Price"/>
-                                            <p:inputText      value="#{maaif.agrodealerProduct.price}"/>
-                                            <p:outputLabel value="Description"/>
-                                            <p:inputTextarea      value="#{maaif.agrodealerProduct.description}"  style="width: 200px"/>
-                                            <p:messages for="userForm"  showDetail="true" />
-                                        </p:panelGrid>
-                                        <h:panelGrid columns="8">
-                                            <p:commandButton value="SAVE PRODUCT DETAIL"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createProduct}" />
-                                        </h:panelGrid>
-                                        <p:outputLabel value="Upload the products Photo to Submit your data"/>
-                                        <p:fileUpload fileUploadListener="#{maaif.handleFileUpload}" mode="advanced" dragDropSupport="false"
-                                                      multiple="true" update="messages" sizeLimit="1200000"  allowTypes="/(\.|\/)(gif|bmp|jpe?g|txt)$/" />
-                                        <p:growl id="messages"  showDetail="true" />
-
+                                        <p:outputLabel value="Packaged with:"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.productpackage}"  style="width: 200px" >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealerProductList}"  var="pkg" itemValue="#{pkg}" itemLabel="#{pkg.productname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Unit"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.agrodealerproductunit}"  style="width: 200px" >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealerproductunitsList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.unitname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Dealer"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.dealerid}"  style="width: 200px" >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealersList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.companyname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Quantity Present"/>
+                                        <p:inputText      value="#{maaif.agrodealerProduct.quantitypresent}"/>
+                                        <p:outputLabel value="KNBS Tag number"/>
+                                        <p:inputText      value="#{maaif.agrodealerProduct.ubsid}"/>
+                                        <p:outputLabel value="Product Serial Number"/>
+                                        <p:inputText      value="#{maaif.agrodealerProduct.productSerial}"/>
+                                        <p:outputLabel value="Name"/>
+                                        <p:inputText      value="#{maaif.agrodealerProduct.productname}"/>
+                                        <p:outputLabel value="Price"/>
+                                        <p:inputText      value="#{maaif.agrodealerProduct.price}"/>
+                                        <p:outputLabel value="Description"/>
+                                        <p:inputTextarea      value="#{maaif.agrodealerProduct.description}"  style="width: 200px"/>
+                                        <p:messages for="userForm"  showDetail="true" />
+                                    </p:panelGrid>
+                                    <h:panelGrid columns="8">
+                                        <p:commandButton value="SAVE PRODUCT DETAIL"  ajax="false" icon="fa fa-plus" styleClass="btn-primary"  action="#{maaif.createProduct}" />
                                     </h:panelGrid>
+                                    <p:outputLabel value="Upload the products Photo to Submit your data"/>
+                                    <p:fileUpload fileUploadListener="#{maaif.handleFileUpload}" mode="advanced" dragDropSupport="false"
+                                                  multiple="true" update="messages" sizeLimit="1200000"  allowTypes="/(\.|\/)(gif|bmp|jpe?g|txt)$/" />
+                                    <p:growl id="messages"  showDetail="true" />
+
                                 </h:form>
                             </p:tab>
-                            <p:tab title="CREATED AGRO DEALER PRODUCTS">
+                            <p:tab title="CREATED SELLER PRODUCTS">
 
 
                                 <div class="box box-solid box-default">
                                     <div class="box-header with-border">
-                                        <h3 class="box-title">Upload agro dealer products</h3>
+                                        <h3 class="box-title">Upload your products</h3>
                                         <div class="box-tools pull-right">
                                         </div>
                                     </div>
                                     <div class="box box-primary">
                                         <div class="box-body">
-                                            To Upload a CSV file on products navigate to tab <h5 style="font-weight: bold">CREATED AGRO DEALER PRODUCTS</h5> and download the CSV format expected, then fill in the fields as expected, for the image replace the url with the correct file name then send the folder with photos
+                                            To Upload a CSV file on products navigate to tab <h5 style="font-weight: bold">CREATED DEALER PRODUCTS</h5> and download the CSV format expected, then fill in the fields as expected, for the image replace the url with the correct file name then send the folder with photos
                                         </div>
                                     </div>
                                 </div>
@@ -136,7 +98,7 @@
                                                  paginator="true" rows="10"
                                                  style="background: transparent; font-size:11px"
                                                  id="agrodealerProductsTable"
-                                                 emptyMessage="No agrodealer Product found with given criteria" filteredValue="#{maaif.agrodealerProductList}">
+                                                 emptyMessage="No seller Product found with given criteria" filteredValue="#{maaif.agrodealerProductList}">
                                         <f:facet name="header">
                                             <h:commandLink>
                                                 <h:graphicImage value="/images/excel.png" width="32" height="32"/>

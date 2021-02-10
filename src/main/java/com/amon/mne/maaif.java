@@ -1,13 +1,15 @@
+package com.amon.mne;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import com.amon.db.*;
 import com.amon.mne.ParameterStringBuilder;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -38,12 +40,39 @@ import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.CategoryAxis;
 import org.primefaces.model.chart.LineChartSeries;
+import java.security.Key;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Base64;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.Cipher;
 
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
+import javax.crypto.spec.SecretKeySpec;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.naming.NamingException;
+import org.primefaces.json.JSONObject;
 
 /**
  *
@@ -52,6 +81,9 @@ import javax.faces.event.AjaxBehaviorEvent;
 @javax.faces.bean.ManagedBean(name = "maaif")
 @SessionScoped
 public class maaif implements Serializable {
+
+    @Resource(name = "jndi/email")
+    private Session jndiemail;
 
     Logger logger = Logger.getLogger("errorLog");
     @PersistenceContext(unitName = "maaifPU")
@@ -87,6 +119,8 @@ public class maaif implements Serializable {
     private List<Agrodealerproducttypes> productTypesList = new ArrayList<Agrodealerproducttypes>();
     private Orders orders = new Orders();
     private List<Orders> orderslist = new ArrayList<Orders>();
+    private Loans loans = new Loans();
+    private List<Loans> loanslist = new ArrayList<Loans>();
     private Distributionchannel channels = new Distributionchannel();
     private List<Distributionchannel> channelList = new ArrayList<Distributionchannel>();
     private Cropproducts cropproduct = new Cropproducts();
@@ -99,9 +133,14 @@ public class maaif implements Serializable {
     private Nira nira = new Nira();
     private User users = new User();
     private User farmers = new User();
+
+    private String oldPass;
+    private String newPass;
+    private String confirmPass;
     private List<User> userList = new ArrayList<User>();
     private Invoices invoice = new Invoices();
     private List<Invoices> invoiceList = new ArrayList<Invoices>();
+    private List<Invoices> farmerinvoiceList = new ArrayList<Invoices>();
     private Lpo lpo = new Lpo();
     private List<Lpo> lpoList = new ArrayList<Lpo>();
 
@@ -144,14 +183,17 @@ public class maaif implements Serializable {
     private Boolean admin = false;
     private Boolean farmer = false;
     private Boolean government = false;
-    private Boolean UBA = false;
+    private Boolean MAMLAKA = false;
 
+    private static SecretKeySpec secretKey;
+    private static byte[] key;
     private UploadedFile file;
 
     /**
      * Creates a new instance of mne
      */
     public maaif() {
+
     }
 
     @PostConstruct
@@ -194,21 +236,25 @@ public class maaif implements Serializable {
         try {
             setQuantity((Integer) 1);
             Usergroup g;
-            setUser((User) getEm().createQuery("select u from User u where u.username = '" + getUsername() + "' and u.pword = '" + getPassword() + "'").getSingleResult());
+            setUser((User) getEm().createQuery("select u from User u where u.username = '" + getUsername() + "' and u.pword = '" + encrypt(getPassword(), "1234567890").toString() + "'").getSingleResult());
             g = (Usergroup) getEm().createQuery("select g from Usergroup g where g.name = '" + getUser().getGroupID().getName() + "'").getSingleResult();
+
+            if (g.getStatusID().equals(new Status(0))) {
+                return "changePass.xhtml?faces-redirect=true";
+            }
             if (g.getName().equalsIgnoreCase("Admin")) {
                 setAdmin(true);
                 setAgrodealer(false);
                 setGovernment(false);
-                setUBA(false);
+                setMAMLAKA(false);
                 setFarmer(false);
                 return "users.xhtml?faces-redirect=true";
-
             }
+
             if (g.getName().equalsIgnoreCase("Buyer")) {
                 setFarmer(true);
                 setAdmin(false);
-                setUBA(false);
+                setMAMLAKA(false);
                 setAgrodealer(false);
                 setGovernment(false);
                 return "welcome.xhtml?faces-redirect=true";
@@ -217,7 +263,7 @@ public class maaif implements Serializable {
                 setAgrodealer(true);
                 setAdmin(false);
                 setGovernment(false);
-                setUBA(false);
+                setMAMLAKA(false);
                 setFarmer(false);
                 return "agrodealersproducts.xhtml?faces-redirect=true";
             }
@@ -225,7 +271,7 @@ public class maaif implements Serializable {
                 setAgrodealer(true);
                 setAdmin(false);
                 setGovernment(false);
-                setUBA(false);
+                setMAMLAKA(false);
                 setFarmer(false);
                 return "agrodealersproducts.xhtml?faces-redirect=true";
             }
@@ -233,7 +279,7 @@ public class maaif implements Serializable {
                 setAdmin(false);
                 setAgrodealer(false);
                 setGovernment(true);
-                setUBA(false);
+                setMAMLAKA(false);
                 setFarmer(false);
                 return "report.xhtml?faces-redirect=true";
             }
@@ -242,7 +288,7 @@ public class maaif implements Serializable {
                 setAdmin(false);
                 setAgrodealer(false);
                 setGovernment(false);
-                setUBA(true);
+                setMAMLAKA(true);
                 setFarmer(false);
                 return "report.xhtml?faces-redirect=true";
             }
@@ -767,36 +813,110 @@ public class maaif implements Serializable {
         }
     }
 
+    public static void setKey(String myKey) {
+        MessageDigest sha = null;
+        try {
+            key = myKey.getBytes("UTF-8");
+            sha = MessageDigest.getInstance("SHA-1");
+            key = sha.digest(key);
+            key = Arrays.copyOf(key, 16);
+            secretKey = new SecretKeySpec(key, "AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String encrypt(String strToEncrypt, String secret) {
+        try {
+            setKey(secret);
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+        } catch (Exception e) {
+            System.out.println("Error while encrypting: " + e.toString());
+        }
+        return null;
+    }
+
+    public static String decrypt(String strToDecrypt, String secret) {
+        try {
+            setKey(secret);
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+        } catch (Exception e) {
+            System.out.println("Error while decrypting: " + e.toString());
+        }
+        return null;
+    }
+
     public String createUser() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+
+            getUtx().begin();
+
+            users.setPword(encrypt("pass@123", "1234567890").toString());
+            users.setStatusID(new Status(0));
+            //mail the user their password 
+            sendMail(users.getEmail(), "MAMLAKA PASSWORD", "Dear " + users.getUsername() + "\n\n" + "Your Password is pass@123\nPlease login to the portal and proceed to change\n\nKind Regards\nMamlaka Team");
+            getAudit().setAction("saved user " + getUsers().getUsername());
+            getAudit().setCreatedby(getUser());
+            getAudit().setTimer(new Date());
+            users.setCreatedAt(new java.util.Date());
+            users.setCreatedBy(user);
+
+            getEm().persist(getAudit());
+            getEm().persist(getUsers());
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", getUsers().getName() + " saved successfully."));
+            setUsers(new User());
+
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", ex.getMessage()));
+            ex.printStackTrace();
+            logger.info(ex.getMessage());
+        }
+        return null;
+    }
+
+    public String changePassword() {
         try {
             if (StringUtils.isEmpty(getUsername())) {
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
                 return "/index.xhtml";
             }
-
-            if (NIRA(users.getStaffID().toString()).equalsIgnoreCase("000")) {
-                getUtx().begin();
-                getAudit().setAction("saved user " + getUsers().getUsername());
-                getAudit().setCreatedby(getUser());
-                getAudit().setTimer(new Date());
-                users.setCreatedAt(new java.util.Date());
-                users.setCreatedBy(user);
-
-                getEm().persist(getAudit());
-                getEm().persist(getUsers());
-                getUtx().commit();
-
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", getUsers().getName() + " saved successfully."));
-                setUsers(new User());
+            if (confirmPass.equals(newPass)) {
+                if (newPass.equals(oldPass)) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Your new password is similar to your old password."));
+                } else {
+                    User user = getEm().find(User.class, farmers.getIdusers());
+                    status.setIdstatus(0);
+                    user.setPword(encrypt(newPass, "1234567890").toString());
+                    user.setStatusID(new Status(1));
+                    getUtx().begin();
+                    getAudit().setAction("changed password " + users.getIdusers());
+                    getAudit().setCreatedby(user);
+                    getAudit().setTimer(new Date());
+                    getEm().persist(getAudit());
+                    getEm().merge(user);
+                    getUtx().commit();
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", users.getName() + "'s password changed successfully."));
+                    users = new User();
+                }
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", getUsers().getName() + " is not registered at NIRA. please register and try again"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Confimred passwords and new passwords are not similar"));
             }
-
         } catch (Exception ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", ex.getMessage()));
-            ex.printStackTrace();
             logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not change your password."));
         }
         return null;
     }
@@ -1047,6 +1167,235 @@ public class maaif implements Serializable {
             FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, "LPO " + lpo.getItemCode() + " deleted", "LPO " + lpo.getItemCode() + " deleted");
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage("User", success);
+
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+            FacesMessage success = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage());
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage("User", success);
+        }
+
+        return null;
+    }
+
+    public String createLoan() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+
+            getUtx().begin();
+            getAudit().setAction("created loan " + loans.getLoanAmount() + " for " + loans.getUserID().getIdNumber());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+
+            getEm().persist(getAudit());
+            getEm().persist(loans);
+            getUtx().commit();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", loans.getLoanAmount() + " created successfully."));
+            loans = new Loans();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not create a Loan."));
+        }
+
+        return null;
+    }
+
+    public String requestBuyerInvoiceLoan() {
+        String output = null;
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+
+            loans.setAggregatorLoanRef(invoice.getNumber().toString());
+            loans.setAnnualInterestRate(invoice.getInterestRate());
+            loans.setLoanAmount(invoice.getAmount());
+            loans.setCreatedBy(invoice.getBuyer());
+            loans.setLoanPurpose("invoiced " + invoice.getAmount() + " from " + invoice.getCreatedBy() + " for " + invoice.getProductID().getProductname());
+            loans.setLoanTenure(invoice.getPaymentDuration());
+            loans.setProductId(invoice.getProductID().getProductname());
+            loans.setRepaymentStartDate(invoice.getCreatedOn());
+            loans.setSectorId("0");
+            loans.setStatus(0);
+            loans.setUserID(user);
+
+            try {
+
+                URL url = new URL("https://advancly-aggregator.staging.vggdev.com/api/v1/account/loan_application");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Accept", "application/json");
+
+                String input = "{\"identity_number\":\"" + loans.getUserID().getIdNumber() + "\","
+                        + "\"Authorization\":\"" + authenticate() + "\","
+                        + "\"email\":\"" + loans.getUserID().getEmail() + "\","
+                        + "\"phone_number\":\"" + loans.getUserID().getPhone() + "\","
+                        + "\"gender\":\"" + loans.getUserID().getGender() + "\","
+                        + "\"photo_url\":\"" + loans.getUserID().getPhotoUrl() + "\","
+                        + "\"residence_address\":\"" + loans.getUserID().getResidenceAddress() + "\","
+                        + "\"city\":\"" + loans.getUserID().getCity() + "\","
+                        + "\"state\":\"" + loans.getUserID().getState() + "\","
+                        + "\"date_of_birth\":\"" + loans.getUserID().getDob() + "\","
+                        + "\"borrower_type\":\"1\","
+                        + "\"company_name\":\"" + loans.getUserID().getCompanyName() + "\","
+                        + "\"registration_number\":\"" + loans.getUserID().getCompanyRegistrationNumber() + "\","
+                        + "\"company_address\":\"" + loans.getUserID().getCompanyAddress() + "\","
+                        + "\"company_city\":\"" + loans.getUserID().getCompanyCity() + "\","
+                        + "\"company_state\":\"" + loans.getUserID().getCompanyState() + "\","
+                        + "\"bank_account_name\":\"" + loans.getUserID().getBankAccName() + "\","
+                        + "\"aggregator_loan_ref\":\"" + loans.getAggregatorLoanRef() + "\","
+                        + "\"product_id\":\"" + loans.getProductId() + "\","
+                        + "\"sector_id\":\"" + loans.getSectorId() + "\","
+                        + "\"loan_tenure\":\"" + loans.getLoanTenure() + "\","
+                        + "\"loan_amount\":\"" + loans.getLoanAmount() + "\","
+                        + "\"annual_interest_rate\":\"" + loans.getAnnualInterestRate() + "\","
+                        + "\"repayment_start_date\":\"" + loans.getRepaymentStartDate() + "\","
+                        + "\"loan_purpose\":\"" + loans.getLoanPurpose() + "\""
+                        + "}";
+
+                OutputStream os = conn.getOutputStream();
+                os.write(input.getBytes());
+                os.flush();
+
+                if (conn.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
+                    throw new RuntimeException("Failed : HTTP error code : "
+                            + conn.getResponseCode());
+                }
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        (conn.getInputStream())));
+
+                System.out.println("Output from Server .... \n");
+                while ((output = br.readLine()) != null) {
+                    System.out.println(output);
+                }
+                conn.disconnect();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            getUtx().begin();
+            getAudit().setAction("created loan " + loans.getLoanAmount() + " for " + loans.getUserID().getIdNumber());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+
+            getEm().persist(getAudit());
+            getEm().persist(loans);
+            getUtx().commit();
+
+            JSONObject obj = new JSONObject(output);
+            String message = obj.getString("message");
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", message + "."));
+            loans = new Loans();
+
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not create a Loan."));
+        }
+
+        return null;
+    }
+
+    public String authenticate() {
+        try {
+            URL url = new URL("https://advancly-aggregator.staging.vggdev.com/api/v1/account/customlogin");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Accept", "application/json");
+            String auth = "{\"password\":\"\","
+                    + "\"email\":\"njoki@mam-laka.com\""
+                    + "}";
+            OutputStream os = conn.getOutputStream();
+            os.write(auth.getBytes());
+            os.flush();
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            while ((output = br.readLine()) != null) {
+                System.out.println(output);
+            }
+            conn.disconnect();
+            JSONObject obj = new JSONObject(output);
+            String token = obj.getString("token");
+            return token;
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String updateLoan() {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            Loans loan = getEm().find(Loans.class, loans.getIdloans());
+            loan.setAggregatorLoanRef(loans.getAggregatorLoanRef());
+            loan.setCreatedBy(user);
+            loan.setAnnualInterestRate(loans.getAnnualInterestRate());
+            loan.setCreatedOn(new java.util.Date());
+            loan.setLoanAmount(loans.getLoanAmount());
+            loan.setLoanPurpose(loans.getLoanPurpose());
+            loan.setLoanTenure(loans.getLoanTenure());
+            loan.setProductId(loans.getProductId());
+            loan.setRepaymentStartDate(loans.getRepaymentStartDate());
+            loan.setSectorId(loans.getSectorId());
+            loan.setStatus(0);
+            loan.setUserID(loans.getUserID());
+            getUtx().begin();
+            getAudit().setAction("updated loans " + loans.getLoanAmount() + " purpose " + loans.getLoanPurpose());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            getEm().merge(loan);
+            getUtx().commit();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", loans.getIdloans() + " Updated successfully."));
+            loan = new Loans();
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "Could not update a loans."));
+        }
+
+        return null;
+    }
+
+    public String deleteLoan(Loans lpo) {
+        try {
+            if (StringUtils.isEmpty(getUsername())) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Please login to the system"));
+                return "/index.xhtml";
+            }
+            getUtx().begin();
+            getAudit().setAction("Deleted loans " + loans.getIdloans());
+            getAudit().setCreatedby(user);
+            getAudit().setTimer(new Date());
+            getEm().persist(getAudit());
+            Loans toBeRemoved = (Loans) getEm().merge(lpo);
+            getEm().remove(toBeRemoved);
+            getUtx().commit();
+            lpo = new Loans();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success!", loans.getIdloans() + " Deleted successfully."));
 
             return null;
         } catch (Exception e) {
@@ -3515,17 +3864,17 @@ public class maaif implements Serializable {
     }
 
     /**
-     * @return the UBA
+     * @return the MAMLAKA
      */
-    public Boolean getUBA() {
-        return UBA;
+    public Boolean getMAMLAKA() {
+        return MAMLAKA;
     }
 
     /**
-     * @param UBA the UBA to set
+     * @param MAMLAKA the MAMLAKA to set
      */
-    public void setUBA(Boolean UBA) {
-        this.UBA = UBA;
+    public void setMAMLAKA(Boolean MAMLAKA) {
+        this.MAMLAKA = MAMLAKA;
     }
 
     /**
@@ -3777,7 +4126,7 @@ public class maaif implements Serializable {
      */
     public List<Invoices> getInvoiceList() {
 
-        invoiceList = em.createQuery("SELECT i FROM Invoices i").getResultList();
+        invoiceList = em.createQuery("SELECT i FROM Invoices i where i.createdBy = " + user.getIdusers() + "").getResultList();
         return invoiceList;
     }
 
@@ -3846,6 +4195,102 @@ public class maaif implements Serializable {
     }
 
     /**
+     * @return the loans
+     */
+    public Loans getLoans() {
+        return loans;
+    }
+
+    /**
+     * @param loans the loans to set
+     */
+    public void setLoans(Loans loans) {
+        this.loans = loans;
+    }
+
+    /**
+     * @return the loanslist
+     */
+    public List<Loans> getLoanslist() {
+
+        loanslist = em.createQuery("select l from Loans l").getResultList();
+        return loanslist;
+    }
+
+    /**
+     * @param loanslist the loanslist to set
+     */
+    public void setLoanslist(List<Loans> loanslist) {
+        this.loanslist = loanslist;
+    }
+
+    /**
+     * @return the farmerinvoiceList
+     */
+    public List<Invoices> getFarmerinvoiceList() {
+
+        farmerinvoiceList = em.createQuery("select i from Invoices i where i.buyer.idusers = " + user.getIdusers() + "").getResultList();
+        return farmerinvoiceList;
+    }
+
+    /**
+     * @param farmerinvoiceList the farmerinvoiceList to set
+     */
+    public void setFarmerinvoiceList(List<Invoices> farmerinvoiceList) {
+        this.farmerinvoiceList = farmerinvoiceList;
+    }
+
+    private void sendMail(String email, String subject, String body) throws NamingException, MessagingException {
+        MimeMessage message = new MimeMessage(jndiemail);
+        message.setSubject(subject);
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+        message.setText(body);
+        Transport.send(message);
+    }
+
+    /**
+     * @return the newPass
+     */
+    public String getNewPass() {
+        return newPass;
+    }
+
+    /**
+     * @param newPass the newPass to set
+     */
+    public void setNewPass(String newPass) {
+        this.newPass = newPass;
+    }
+
+    /**
+     * @return the confirmPass
+     */
+    public String getConfirmPass() {
+        return confirmPass;
+    }
+
+    /**
+     * @param confirmPass the confirmPass to set
+     */
+    public void setConfirmPass(String confirmPass) {
+        this.confirmPass = confirmPass;
+    }
+
+    /**
      * @return the availableTypesList
      */
+    /**
+     * @return the oldPass
+     */
+    public String getOldPass() {
+        return oldPass;
+    }
+
+    /**
+     * @param oldPass the oldPass to set
+     */
+    public void setOldPass(String oldPass) {
+        this.oldPass = oldPass;
+    }
+
 }

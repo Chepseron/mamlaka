@@ -48,6 +48,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Agrodealerproducts.findByProductSerial", query = "SELECT a FROM Agrodealerproducts a WHERE a.productSerial = :productSerial"),
     @NamedQuery(name = "Agrodealerproducts.findByQtypurchased", query = "SELECT a FROM Agrodealerproducts a WHERE a.qtypurchased = :qtypurchased")})
 public class Agrodealerproducts implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productID")
+    private Collection<Invoices> invoicesCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -310,6 +313,15 @@ public class Agrodealerproducts implements Serializable {
     @Override
     public String toString() {
         return "com.amon.db.Agrodealerproducts[ idagrodealerproducts=" + idagrodealerproducts + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Invoices> getInvoicesCollection() {
+        return invoicesCollection;
+    }
+
+    public void setInvoicesCollection(Collection<Invoices> invoicesCollection) {
+        this.invoicesCollection = invoicesCollection;
     }
     
 }
