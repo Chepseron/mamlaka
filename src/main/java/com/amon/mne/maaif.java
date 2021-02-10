@@ -82,8 +82,8 @@ import org.primefaces.json.JSONObject;
 @SessionScoped
 public class maaif implements Serializable {
 
-    @Resource(name = "jndi/email")
-    private Session jndiemail;
+//    @Resource(name = "jndi/email")
+//    private Session jndiemail;
 
     Logger logger = Logger.getLogger("errorLog");
     @PersistenceContext(unitName = "maaifPU")
@@ -236,7 +236,7 @@ public class maaif implements Serializable {
         try {
             setQuantity((Integer) 1);
             Usergroup g;
-            setUser((User) getEm().createQuery("select u from User u where u.username = '" + getUsername() + "' and u.pword = '" + encrypt(getPassword(), "1234567890").toString() + "'").getSingleResult());
+            setUser((User) getEm().createQuery("select u from User u where u.username = '" + getUsername() + "' and u.pword = '" + encrypt(password, "1234567890").toString() + "'").getSingleResult());
             g = (Usergroup) getEm().createQuery("select g from Usergroup g where g.name = '" + getUser().getGroupID().getName() + "'").getSingleResult();
 
             if (g.getStatusID().equals(new Status(0))) {
