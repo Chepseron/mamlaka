@@ -11,7 +11,6 @@
     <ui:define name="title">
     </ui:define>
     <ui:define name="body">
-
         <div class="box box-primary">
             <div class="box-header with-border">
 
@@ -21,34 +20,9 @@
                         <p:tabView  styleClass="si-icon-16x16 si-icon-edit"    style="background: transparent; width: inherit; height: 100%; border: 0" >  
                             <p:tab title="MANAGE SELLER PRODUCTS">
                                 <h:form id="agrodealerProductForm"> 
-                                    <p:panelGrid columns="4" columnClasses="ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8"
+                                    <p:panelGrid columns="2" columnClasses="ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8,ui-grid-col-8"
                                                  layout="grid" styleClass="ui-fluid card">
-                                        <p:outputLabel value="Type"/>
-                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.producttype}"  style="width: 200px" >
-                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{maaif.productTypesList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
-                                        </p:selectOneMenu>
-                                        <p:outputLabel value="Variety"/>
-                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.variety}"  style="width: 200px" >
-                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
-                                        </p:selectOneMenu>
 
-                                        <p:outputLabel value="Packaged with:"/>
-                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.productpackage}"  style="width: 200px" >
-                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{maaif.agrodealerProductList}"  var="pkg" itemValue="#{pkg}" itemLabel="#{pkg.productname}" />
-                                        </p:selectOneMenu>
-                                        <p:outputLabel value="Unit"/>
-                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.agrodealerproductunit}"  style="width: 200px" >
-                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{maaif.agrodealerproductunitsList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.unitname}" />
-                                        </p:selectOneMenu>
-                                        <p:outputLabel value="Dealer"/>
-                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.dealerid}"  style="width: 200px" >
-                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{maaif.agrodealersList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.companyname}" />
-                                        </p:selectOneMenu>
                                         <p:outputLabel value="Quantity Present"/>
                                         <p:inputText      value="#{maaif.agrodealerProduct.quantitypresent}"/>
                                         <p:outputLabel value="KNBS Tag number"/>
@@ -60,7 +34,33 @@
                                         <p:outputLabel value="Price"/>
                                         <p:inputText      value="#{maaif.agrodealerProduct.price}"/>
                                         <p:outputLabel value="Description"/>
-                                        <p:inputTextarea      value="#{maaif.agrodealerProduct.description}"  style="width: 200px"/>
+                                        <p:inputTextarea      value="#{maaif.agrodealerProduct.description}"  />
+                                        <p:outputLabel value="Type"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.producttype}"   >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.productTypesList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Variety"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.variety}"   >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Packaged with:"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.productpackage}"   >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealerProductList}"  var="pkg" itemValue="#{pkg}" itemLabel="#{pkg.productname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Unit"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.agrodealerproductunit}"   >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealerproductunitsList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.unitname}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Dealer"/>
+                                        <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.dealerid}"   >
+                                            <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{maaif.agrodealersList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.companyname}" />
+                                        </p:selectOneMenu>
                                         <p:messages for="userForm"  showDetail="true" />
                                     </p:panelGrid>
                                     <h:panelGrid columns="8">
@@ -195,27 +195,27 @@
                                         <p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-8"
                                                      layout="grid" styleClass="ui-fluid card">
                                             <p:outputLabel value="Type"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.producttype}"  style="width: 200px" >
+                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.producttype}"   >
                                                 <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
                                                 <f:selectItems value="#{maaif.productTypesList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
                                             </p:selectOneMenu>
                                             <p:outputLabel value="Variety"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.variety}"  style="width: 200px" >
+                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.variety}"   >
                                                 <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
                                                 <f:selectItems value="#{maaif.agrodealerProductList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.productname}" />
                                             </p:selectOneMenu>
                                             <p:outputLabel value="Packaged with:"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.productpackage}"  style="width: 200px" >
+                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.productpackage}"   >
                                                 <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
                                                 <f:selectItems value="#{maaif.agrodealerProductList}"  var="pkg" itemValue="#{pkg}" itemLabel="#{pkg.productname}" />
                                             </p:selectOneMenu>
                                             <p:outputLabel value="Unit"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.agrodealerproductunit}"  style="width: 200px" >
+                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.agrodealerproductunit}"   >
                                                 <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
                                                 <f:selectItems value="#{maaif.agrodealerproductunitsList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.unitname}" />
                                             </p:selectOneMenu>
                                             <p:outputLabel value="Dealer"/>
-                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.dealerid}"  style="width: 200px" >
+                                            <p:selectOneMenu     converter="#{convertor}"  value="#{maaif.agrodealerProduct.dealerid}"   >
                                                 <f:selectItem itemLabel=" " itemValue="" noSelectionOption="true" />
                                                 <f:selectItems value="#{maaif.agrodealersList}"  var="actorID" itemValue="#{actorID}" itemLabel="#{actorID.companyname}" />
                                             </p:selectOneMenu>
@@ -230,7 +230,7 @@
                                             <p:outputLabel value="Price"/>
                                             <p:inputText      value="#{maaif.agrodealerProduct.price}"/>
                                             <p:outputLabel value="Description"/>
-                                            <p:inputTextarea      value="#{maaif.agrodealerProduct.description}"  style="width: 200px"/>
+                                            <p:inputTextarea      value="#{maaif.agrodealerProduct.description}"  />
                                             <p:messages for="userForm"  showDetail="true" />
                                         </p:panelGrid>
                                         <h:panelGrid columns="8">
